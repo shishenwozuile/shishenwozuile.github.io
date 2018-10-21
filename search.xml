@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[three]]></title>
+    <url>%2F2018%2F10%2F21%2Fthree%2F</url>
+    <content type="text"><![CDATA[wifi test]]></content>
+      <categories>
+        <category>wifi</category>
+      </categories>
+  </entry>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2018%2F10%2F21%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[你好啊，李银河！当我跨过沉沦的一切，向着永恒开战的时候，你是我的军旗。——王小波]]></content>
+      <categories>
+        <category>web</category>
+      </categories>
+  </entry>
+  <entry>
+    <title><![CDATA[two]]></title>
+    <url>%2F2018%2F10%2F21%2Ftwo%2F</url>
+    <content type="text"></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>two</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[first]]></title>
+    <url>%2F2018%2F10%2F21%2Ffirst%2F</url>
+    <content type="text"><![CDATA[first time]]></content>
+      <categories>
+        <category>ctf</category>
+      </categories>
+      <tags>
+        <tag>one</tag>
+      </tags>
+  </entry>
+</search>
