@@ -86,17 +86,17 @@
 
 
 
-<meta name="description" content="wifi test">
+<meta name="description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:    .text .data .bss 堆–&amp;gt; 未使用与共享库 &amp;lt;–栈 内核     代码段 数据段 未初始化变量 malloc .so 函数使用 用户不可见    栈简介&amp;emsp;&amp;emsp;栈是一种数据结构，是一种具有">
 <meta property="og:type" content="article">
-<meta property="og:title" content="three">
-<meta property="og:url" content="http://yoursite.com/2018/10/21/three/index.html">
+<meta property="og:title" content="linux 栈溢出总结">
+<meta property="og:url" content="http://yoursite.com/2018/10/31/linux-栈溢出总结/index.html">
 <meta property="og:site_name" content="SsatanS">
-<meta property="og:description" content="wifi test">
+<meta property="og:description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:    .text .data .bss 堆–&amp;gt; 未使用与共享库 &amp;lt;–栈 内核     代码段 数据段 未初始化变量 malloc .so 函数使用 用户不可见    栈简介&amp;emsp;&amp;emsp;栈是一种数据结构，是一种具有">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-21T13:13:47.560Z">
+<meta property="og:updated_time" content="2018-11-29T03:08:56.435Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="three">
-<meta name="twitter:description" content="wifi test">
+<meta name="twitter:title" content="linux 栈溢出总结">
+<meta name="twitter:description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:    .text .data .bss 堆–&amp;gt; 未使用与共享库 &amp;lt;–栈 内核     代码段 数据段 未初始化变量 malloc .so 函数使用 用户不可见    栈简介&amp;emsp;&amp;emsp;栈是一种数据结构，是一种具有">
 
 
 
@@ -126,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/10/21/three/">
+  <link rel="canonical" href="http://yoursite.com/2018/10/31/linux-栈溢出总结/">
 
 
 
 
 
-  <title>three | SsatanS</title>
+  <title>linux 栈溢出总结 | SsatanS</title>
   
 
 
@@ -331,7 +331,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/21/three/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/31/linux-栈溢出总结/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="失神我醉了">
@@ -348,7 +348,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">three</h1>
+          <h1 class="post-title" itemprop="name headline">linux 栈溢出总结</h1>
         
 
         <div class="post-meta">
@@ -360,8 +360,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-21T21:13:15+08:00">
-                2018-10-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-31T10:26:02+08:00">
+                2018-10-31
               </time>
             
 
@@ -370,28 +370,6 @@
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/wifi/" itemprop="url" rel="index">
-                    <span itemprop="name">wifi</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -414,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2
+                  1.3k
                 </span>
               
 
@@ -430,7 +408,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  5
                 </span>
               
             </div>
@@ -451,8 +429,86 @@
       
 
       
-        <p>wifi test</p>
-
+        <h3 id="进程中内存分段"><a href="#进程中内存分段" class="headerlink" title="进程中内存分段"></a>进程中内存分段</h3><p>Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">.text</th>
+<th>.data</th>
+<th style="text-align:center">.bss</th>
+<th style="text-align:center">堆–&gt;</th>
+<th style="text-align:center">未使用与共享库</th>
+<th style="text-align:center">&lt;–栈</th>
+<th style="text-align:right">内核</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">代码段</td>
+<td>数据段</td>
+<td style="text-align:center">未初始化变量</td>
+<td style="text-align:center">malloc</td>
+<td style="text-align:center">.so</td>
+<td style="text-align:center">函数使用</td>
+<td style="text-align:right">用户不可见</td>
+</tr>
+</tbody>
+</table>
+<h3 id="栈简介"><a href="#栈简介" class="headerlink" title="栈简介"></a>栈简介</h3><p>&emsp;&emsp;栈是一种数据结构，是一种具有<strong>先进后出</strong>性质的队列,<strong>由内存高地址向低地址逆向增长</strong>，汇编中用push将数据添加到栈，pop从栈中取数据。每个进程都在内存.stack段维持自身栈，与栈相关有两个寄存器：ebp，esp。而函数调用栈是我们栈溢出基础。</p>
+<h3 id="函数调用栈"><a href="#函数调用栈" class="headerlink" title="函数调用栈"></a>函数调用栈</h3><ul>
+<li><a href="http://www.cnblogs.com/clover-toeic/p/3755401.html" target="_blank" rel="noopener">c函数调用栈1</a></li>
+<li><a href="http://www.cnblogs.com/clover-toeic/p/3756668.html" target="_blank" rel="noopener">c函数调用栈2</a><br>32位和64位程序在参数保存上有所区别，<ul>
+<li>x86: 参数在eip上方，即栈上。</li>
+<li>x64: 前6个参数依次保存在RDI,RSI,RDX,RCX,R8,R9寄存器中，如果多余6个则保存在栈上。</li>
+</ul>
+</li>
+</ul>
+<h3 id="栈溢出原理"><a href="#栈溢出原理" class="headerlink" title="栈溢出原理"></a>栈溢出原理</h3><p>&emsp;&emsp;程序向栈中某个变量写入字节数超过了变量自己申请的字节数，导致相邻栈中变量值改变，这种称为缓冲区溢出。这种漏洞可使程序崩溃(DOS),还可能让我们控制程序流程(getshell）<br>所以栈溢出前提:</p>
+<ul>
+<li>程序能向栈上写数据</li>
+<li>写入数据大小未能良好控制</li>
+</ul>
+<h3 id="linux下栈保护"><a href="#linux下栈保护" class="headerlink" title="linux下栈保护"></a>linux下栈保护</h3><ol>
+<li><strong>cannary</strong>（在栈中插入cookie信息，函数返回时验证）</li>
+<li><strong>FORTIFY</strong> (FORTIFY_SOURCE机制对字符串有两个限制 1.包含%n的格式化字符串不能位于程序内存可写位置。2.当使用位置参数时，必须使用范围内的所有参数。即用%6$x,得同时用1,2,3,4,5。</li>
+<li><strong>NX</strong>（no-execute,堆栈不可执行),(.bss只有对写权限）</li>
+<li><strong>RELRO</strong> (full RELRO, Partial RELRO)（FR设置符号重定向为只读，减少GOT攻击)</li>
+<li><strong>ALSR</strong> 地址空间布局随机化，<br><em>只有在开启 ASLR 之后，PIE 才会生效</em><blockquote>
+<p>0就是关闭ASLR，没有随机化，堆栈基地址每次都相同，而且libc.so每次的地址也相同。<br>1是普通的ASLR。mmap基地址、栈基地址、.so加载基地址都将被随机化，但是堆没用随机化<br>2是增强的ASLR，增加了堆随机化</p>
+</blockquote>
+</li>
+</ol>
+<p><strong>PIE</strong>叫做代码部分地址无关，PIE能使程序像共享库一样在主存任何位置装载，这需要将程序编译成位置无关，并链接为ELF共享对象。<br>如果不开启PIE的话，那么每次ELF文件加载的地址都是相同的。<br>将端口绑定到程序，模仿远程服务器开启服务：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat TCP4-LISTEN:9999,fork EXEC:./meet</span><br></pre></td></tr></table></figure></p>
+<h3 id="栈保护绕过"><a href="#栈保护绕过" class="headerlink" title="栈保护绕过"></a>栈保护绕过</h3><h4 id="ROP-返回导向编程"><a href="#ROP-返回导向编程" class="headerlink" title="ROP(返回导向编程)"></a><strong>ROP(返回导向编程)</strong></h4><p>&emsp;&emsp;Bypass NX and ASLR(程序执行时会使libc.so地址变化)<br>寻找控制寄存器的gdagets：ropgadgets–&gt;$ROPgadget –binary b0verfl0w –only ‘jmp|ret’<br>.text(可用函数）/.bss(写入shellcode再执行它)</p>
+<p><strong>rop调用系统调用</strong>,eg:execve(“/bin/sh”,NULL,NULL)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = &apos;A&apos; * 112, pop_eax_ret, 0xb, pop_edx_ecx_ebx_ret, 0, 0, binsh, int_0x80</span><br></pre></td></tr></table></figure></p>
+<p><strong>NX绕过</strong><br>&emsp;&emsp;<em>Ret2libc</em>–&gt;将eip的值覆盖为libc.so(共享库）的system地址，使执行system(“/bin/sh”)<br><strong>ALSR绕过</strong></p>
+<ul>
+<li>libc已知：libc.so函数偏移地址固定，所以泄露某一地址，就可以得到其余地址，一般采用<strong>got表泄漏</strong>,当然，由于 libc 的延迟绑定机制，我们需要泄漏已经执行过的函数的地址.</li>
+<li>libc未知：通过内存泄漏，eg：pwnlib.dynelf, 泄漏函数：puts,write,printf</li>
+</ul>
+<ol>
+<li><p><strong>stack pivoting</strong>:劫持栈指针指向攻击者控制的内存(堆,栈，.bss)然后rop</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eg: shellcode|padding|fake ebp|jmp esp|set esp to shellcode jmp esp (sub esp,size jmp esp)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>frame faking</strong>:同时控制eip和ebp，改变程序栈帧。<br>payload: 执行两次 leave ret 到达我们伪造的栈帧</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">padding | fake ebp|leave ret addr</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li>函数入口： push ebp mov ebp,esp</li>
+<li>函数出口： leave–&gt; mov esp,ebp pop ebp ||  ret—&gt; pop eip<br>伪造栈<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fake ebp --&gt;  ebp2| target function addr| leave ret addr| arg1|arg2</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol start="3">
+<li><strong>stack smash</strong><br>当canary被修改，程序执行<strong>stack_chk_fail 打印 argv[0]指向的字符串（程序名)<br>劫持 </strong>stack_chk_fail的 got 值劫持流程getshell，或泄露内存</li>
+<li><strong>partial overwrite</strong>:由于内存的页载入机制，PIE的随机化只能影响到单个内存页。通常来说，一个内存页大小为0x1000，这就意味着不管地址怎么变，某条指令的后12位，3个十六进制数的地址是始终不变的</li>
+</ol>
+<p><strong>绕过canary</strong><br>canary实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">函数序言时：</span><br><span class="line">mov    rax, qword ptr fs:[0x28]	向rbp-8插入canary</span><br><span class="line">mov    qword ptr [rbp - 8], rax</span><br><span class="line">函数返回前： 检测cannary是否被修改</span><br><span class="line">mov    rdx,QWORD PTR [rbp-0x8]</span><br><span class="line">xor    rdx,QWORD PTR fs:0x28</span><br><span class="line">je     0x4005d7 &lt;main+65&gt;</span><br><span class="line">call   0x400460 &lt;__stack_chk_fail@plt&gt;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>Canary 设计为以字节 \x00 结尾，本意是为了保证 Canary 可以截断字符串,溢出泄露canary，并打印。</li>
+<li>可以通过劫持 <strong>stack_chk_fail的 got 值劫持流程或者利用 </strong>stack_chk_fail 泄漏内容<br>fs寄存器指向TLS结构（线程局部存储) fs:0x28指向结构中的stack_guard</li>
+</ol>
+<h3 id="BROP"><a href="#BROP" class="headerlink" title="BROP"></a>BROP</h3>
       
     </div>
     
@@ -500,8 +556,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/10/21/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2018/10/28/nc———网络瑞士军刀/" rel="next" title="nc———网络瑞士军刀">
+                <i class="fa fa-chevron-left"></i> nc———网络瑞士军刀
               </a>
             
           </div>
@@ -510,8 +566,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/10/28/学习-python3-AES/" rel="prev" title="学习 python3 AES">
-                学习 python3 AES <i class="fa fa-chevron-right"></i>
+              <a href="/2018/11/16/网络协议/" rel="prev" title="网络协议">
+                网络协议 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -564,8 +620,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -669,6 +734,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程中内存分段"><span class="nav-number">1.</span> <span class="nav-text">进程中内存分段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈简介"><span class="nav-number">2.</span> <span class="nav-text">栈简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数调用栈"><span class="nav-number">3.</span> <span class="nav-text">函数调用栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈溢出原理"><span class="nav-number">4.</span> <span class="nav-text">栈溢出原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linux下栈保护"><span class="nav-number">5.</span> <span class="nav-text">linux下栈保护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈保护绕过"><span class="nav-number">6.</span> <span class="nav-text">栈保护绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ROP-返回导向编程"><span class="nav-number">6.1.</span> <span class="nav-text">ROP(返回导向编程)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BROP"><span class="nav-number">7.</span> <span class="nav-text">BROP</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
