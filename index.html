@@ -433,7 +433,7 @@
       
         
           
-          审题&emsp;&emsp;又是ssh，连上去看看，存在input.c源文件，那么直接分析源文件。1
+          审题&emsp;&emsp;又是ssh，连上去看看，存在input.c源文件，那么直接分析源文件。1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162#code:#include &lt;stdio.h&gt;#inclu
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -590,8 +590,9 @@
       
         
           
-          Smurf攻击：　　发送伪装的ICMP数据包，目的地址设为某个网络的广播地址，源地址设为要攻击的目的
-          ...
+          Smurf攻击：　　发送伪装的ICMP数据包，目的地址设为某个网络的广播地址，源地址设为要攻击的目的主机，使所有收到此ICMP数据包的主机都将对目的主机发出一个回应，使被攻击主机在某一段时间内收到 成千上万的数据包
+
+          
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/11/16/协议攻击/#more" rel="contents">
@@ -749,7 +750,8 @@
           
           TCPtcp 特性
 tcp提供一种面向连接的，可靠的字节流服务。仅两方通信，不能用于广播和多播。
-t
+tcp使用校验和，确认和重传来保证可靠传输
+tcp使用滑动窗口来实现流量控制，动态改变窗口大小来进行拥塞控制tcp 三次握手1.客户端发送 （SYN=1,seq=x）的包，进入SYN_SEND状态。 2.服务器返回（SYN=1,seq=y，ACK=1,ACKnum=x+1），进入SYN_RCVD状态。
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -906,7 +908,32 @@ t
       
         
           
-          进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正
+          进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:
+
+
+
+.text
+.data
+.bss
+堆–&gt;
+未使用与共享库
+&lt;–栈
+内核
+
+
+
+
+代码段
+数据段
+未初始化变量
+malloc
+.so
+函数使用
+用户不可见
+
+
+
+栈简介&emsp;&emsp;栈是一种数据结构，是一种具有
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1063,7 +1090,10 @@ t
       
         
           
-          &emsp;&emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本
+          &emsp;&emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面学习一些实例：
+1.聊天Server—listening1nc -l 9999
+Client—connect1nc 127.0.0.1 9999
+默认nc会在9999开启一个tcp服务器，输出与输入都在
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1220,7 +1250,8 @@ t
       
         
           
-          &emsp;&emsp;最近学着堆溢出的各种花式操作时，头快炸了。因此想换个知识过渡一下，一直对木马
+          &emsp;&emsp;最近学着堆溢出的各种花式操作时，头快炸了。因此想换个知识过渡一下，一直对木马和病毒有兴趣，想了解具体的实现。今天写木马时遇到了加密的问题，记录一下。
+AES简介&emsp;&emsp;AES: Advanced Encryption Standard(高级加密标准),在密码学中又称Rijndael加密法,该算法由比利时密码学家Joan Daemen和Vincent Rijm
           ...
           <!--noindex-->
           <div class="post-button text-center">
