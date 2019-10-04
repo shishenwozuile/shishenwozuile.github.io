@@ -86,17 +86,17 @@
 
 
 
-<meta name="description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:    .text .data .bss 堆–&amp;gt; 未使用与共享库 &amp;lt;–栈 内核     代码段 数据段 未初始化变量 malloc .so 函数使用 用户不可见    栈简介&amp;emsp;&amp;emsp;栈是一种数据结构，是一种具有">
+<meta name="description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux 栈溢出总结">
 <meta property="og:url" content="http://yoursite.com/2018/10/31/linux-栈溢出总结/index.html">
 <meta property="og:site_name" content="SsatanS">
-<meta property="og:description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:    .text .data .bss 堆–&amp;gt; 未使用与共享库 &amp;lt;–栈 内核     代码段 数据段 未初始化变量 malloc .so 函数使用 用户不可见    栈简介&amp;emsp;&amp;emsp;栈是一种数据结构，是一种具有">
+<meta property="og:description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-29T03:08:56.435Z">
+<meta property="og:updated_time" content="2019-10-04T10:07:24.488Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux 栈溢出总结">
-<meta name="twitter:description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:    .text .data .bss 堆–&amp;gt; 未使用与共享库 &amp;lt;–栈 内核     代码段 数据段 未初始化变量 malloc .so 函数使用 用户不可见    栈简介&amp;emsp;&amp;emsp;栈是一种数据结构，是一种具有">
+<meta name="twitter:description" content="进程中内存分段Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:">
 
 
 
@@ -429,7 +429,7 @@
       
 
       
-        <h3 id="进程中内存分段"><a href="#进程中内存分段" class="headerlink" title="进程中内存分段"></a>进程中内存分段</h3><p>Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:</p>
+        <h3 id="进程中内存分段"><a href="#进程中内存分段" class="headerlink" title="进程中内存分段"></a>进程中内存分段</h3><p>Linux使用虚拟地址空间，每个进程有独立的虚拟地址空间，进程访问的虚拟地址并不是真正的物理地址,这大大增加了进程的寻址空间。由低地址到高地址如下:<br><a id="more"></a></p>
 <table>
 <thead>
 <tr>
