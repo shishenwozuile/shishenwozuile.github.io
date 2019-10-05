@@ -86,17 +86,17 @@
 
 
 
-<meta name="description" content="&amp;emsp;&amp;emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面学习一些实例：">
+<meta name="description" content="&amp;emsp;&amp;emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面是动手实践：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="nc———网络瑞士军刀">
 <meta property="og:url" content="http://yoursite.com/2018/10/28/nc—网络瑞士军刀/index.html">
 <meta property="og:site_name" content="SsatanS">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面学习一些实例：">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面是动手实践：">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-04T10:06:19.159Z">
+<meta property="og:updated_time" content="2019-10-05T07:25:17.103Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="nc———网络瑞士军刀">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面学习一些实例：">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;netcat，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。下面是动手实践：">
 
 
 
@@ -371,6 +371,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -392,7 +414,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  620
+                  628
                 </span>
               
 
@@ -429,20 +451,20 @@
       
 
       
-        <p>&emsp;&emsp;<strong>netcat</strong>，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。<br>下面学习一些实例：<br><a id="more"></a></p>
+        <p>&emsp;&emsp;<strong>netcat</strong>，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。<br>下面是动手实践：<br><a id="more"></a></p>
 <h3 id="1-聊天"><a href="#1-聊天" class="headerlink" title="1.聊天"></a>1.聊天</h3><p>Server—listening<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 9999</span><br></pre></td></tr></table></figure></p>
 <p>Client—connect<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 127.0.0.1 9999</span><br></pre></td></tr></table></figure></p>
 <p>默认nc会在9999开启一个tcp服务器，输出与输入都在此shell，所以不太友好。。。</p>
 <h3 id="2-文件传输"><a href="#2-文件传输" class="headerlink" title="2.文件传输"></a>2.文件传输</h3><p>传输小文件时，方便快捷。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">nc -l 9999 &lt; file1.txt 或 &gt; file2.txt</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.1 9999 &gt; file1.txt 或 &lt; file2.txt</span><br></pre></td></tr></table></figure>
-<p>这里服务器即可发送文件，也能接受文件，不用再将文件源做服务器，‘&gt;’是shell里的重定向，玩linux应该都知道。。。</p>
-<h5 id="目录传输"><a href="#目录传输" class="headerlink" title="目录传输"></a>目录传输</h5><p>传输目录也就是打包，压缩文件(可选）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">tar -cvf - dirname | bzip2 -z | nc -l 9999</span><br></pre></td></tr></table></figure></p>
+<p>这里服务器即可发送文件，也能接受文件，不用再将文件源做服务器，‘&gt;’是shell里的重定向。</p>
+<h5 id="压缩传输"><a href="#压缩传输" class="headerlink" title="压缩传输"></a>压缩传输</h5><p>传输各种文件也就是打包，压缩文件(可选）<br>tar 打包； bzip2 压缩<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">tar -cvf - dirname | bzip2 -z | nc -l 9999</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.1 9999 | bzip2 -d | tar -xvf -</span><br></pre></td></tr></table></figure>
 <h3 id="3-克隆设备"><a href="#3-克隆设备" class="headerlink" title="3.克隆设备"></a>3.克隆设备</h3><p>将配置好的linux机器重复同样操作对其他机器,骚操作。。。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">dd if=/dve/sda | nc -l 9999</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.2 | dd of=/dev/sda</span><br></pre></td></tr></table></figure>
 <h3 id="4-打开shell"><a href="#4-打开shell" class="headerlink" title="4.打开shell"></a>4.打开shell</h3><h5 id="正向shell"><a href="#正向shell" class="headerlink" title="正向shell"></a>正向shell</h5><p>客户端得到服务器shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">nc -l 9999 -e /bin/bash -i</span><br></pre></td></tr></table></figure></p>
-<p>不过 -e 好像不好使了。。。不过可以这样<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">mkfifo /tmp/tmpfifo</span><br><span class="line">cat /tmp/tmpfifo | /bin/sh -i 2&gt;&amp;1 | nc -l 9999 &gt; /tmp/tmpfifo</span><br></pre></td></tr></table></figure></p>
-<p>linux下进程间通信必须通过内核提供的通道，而命名管道fifo文件就是其中之一。<br>从网络收到的输入写到fifo文件中<br>cat 命令读取fifo文件并且其内容发送给sh命令<br>sh命令进程受到输入并把它写回到netcat。<br>netcat 通过网络发送输出到client</p>
+<p>不过 -e 好像不好使了。。。不过可以这样<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">mkfifo /tmp/tmpfifo</span><br><span class="line">cat /tmp/tmpfifo | /bin/sh -i 2&gt;&amp;1 | nc -l 9999 &gt; /tmp/tmpfifo</span><br></pre></td></tr></table></figure></p>
+<p>linux下进程间通信必须通过内核提供的通道，而命名管道fifo文件就是其中之一。<br>从网络收到的数据作为输入写到fifo文件中<br>cat 命令读取fifo文件并且将其内容发送给sh命令<br>sh命令执行收到的输入命令并把输出传给netcat。<br>netcat 通过网络发送输出到client</p>
 <p>至于为什么会成功是因为管道使命令平行执行，fifo文件用来替代正常文件，因为fifo使读取等待而如果是一个普通文件，cat命令会尽快结束并开始读取空文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">nc -n 127.0.0.1 9999</span><br></pre></td></tr></table></figure></p>
 <h5 id="反向shell"><a href="#反向shell" class="headerlink" title="反向shell"></a>反向shell</h5><p>服务器得到客户端shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server:</span><br><span class="line">nc -l 9999</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client:</span><br><span class="line">cat /tmp/tmpfifo | /bin/sh -i 2&gt;&amp;1 | nc -n 127.0.0.1 9999 &gt; /tmp/tmpfifo</span><br></pre></td></tr></table></figure>
@@ -600,7 +622,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -677,7 +699,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-聊天"><span class="nav-number">1.</span> <span class="nav-text">1.聊天</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-文件传输"><span class="nav-number">2.</span> <span class="nav-text">2.文件传输</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#目录传输"><span class="nav-number">2.0.1.</span> <span class="nav-text">目录传输</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#3-克隆设备"><span class="nav-number">3.</span> <span class="nav-text">3.克隆设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-打开shell"><span class="nav-number">4.</span> <span class="nav-text">4.打开shell</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#正向shell"><span class="nav-number">4.0.1.</span> <span class="nav-text">正向shell</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反向shell"><span class="nav-number">4.0.2.</span> <span class="nav-text">反向shell</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-指定源地址"><span class="nav-number">5.</span> <span class="nav-text">5.指定源地址</span></a></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-聊天"><span class="nav-number">1.</span> <span class="nav-text">1.聊天</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-文件传输"><span class="nav-number">2.</span> <span class="nav-text">2.文件传输</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#压缩传输"><span class="nav-number">2.0.1.</span> <span class="nav-text">压缩传输</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#3-克隆设备"><span class="nav-number">3.</span> <span class="nav-text">3.克隆设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-打开shell"><span class="nav-number">4.</span> <span class="nav-text">4.打开shell</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#正向shell"><span class="nav-number">4.0.1.</span> <span class="nav-text">正向shell</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反向shell"><span class="nav-number">4.0.2.</span> <span class="nav-text">反向shell</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-指定源地址"><span class="nav-number">5.</span> <span class="nav-text">5.指定源地址</span></a></li></div>
             
 
           </div>
@@ -711,7 +733,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">4.8k</span>
+    <span title="Site words total count">5k</span>
   
 -->
 </div>
@@ -733,7 +755,7 @@
 <span class="post-meta-divider">|</span>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共4.8k字</span>
+  <span class="post-count">博客全站共5k字</span>
 </div>
 
         

